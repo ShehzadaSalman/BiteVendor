@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+
 import { COLORS, FONTS } from '../../constants';
 import { FONT_SIZE } from '../../utils/spacing';
 import AppButton from '../AppButton';
 import FieldComponent from './FieldComponent';
-import { useNavigation } from '@react-navigation/native';
+import { signIn } from '../../redux/slices/authSlice';
+
 export default function PhoneSigninComponent() {
   const [phone, setPhone] = useState();
   const navigation = useNavigation();
-  const handleSendVerificationCodePress = () => {
-    navigation.navigate('LoginScreen');
+  const dispatch = useDispatch();
+
+  const handleSendVerificationCodePress = async () => {
+    // ✅ validate credentials / call API
+    const success = true; // replace with real check
+    if (success) {
+      dispatch(signIn(true)); // switches nav to BottomTabNavigator
+    }
   };
 
   const handleLoginWithEmailPress = () => {
