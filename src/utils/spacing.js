@@ -23,15 +23,20 @@ export const BORDER_RADIUS = {
   xlarge: rw(15), // ~32px
 };
 
+const withMinSize = (value, min) => {
+  const size = rf(value);
+  return size < min ? min : size;
+};
+
 export const FONT_SIZE = {
-  tiny: rf(1.0), // ~8px
-  small: rf(1.2), // ~10px
-  xSmall: rf(1.4), // ~12px
-  normal: rf(1.6), // ~14px
-  medium: rf(1.8), // ~16px
-  large: rf(2.2), // ~18–20px
-  xlarge: rf(2.6), // ~22–24px
-  xxlarge: rf(2.8), // ~26px
+  tiny: withMinSize(1.0, 10), // never smaller than 10px
+  small: withMinSize(1.2, 12), // never smaller than 12px
+  xSmall: withMinSize(1.4, 12), // never smaller than 12px
+  normal: withMinSize(1.6, 14), // never smaller than 14px
+  medium: withMinSize(1.8, 16), // never smaller than 16px
+  large: withMinSize(2.2, 18), // never smaller than 18px
+  xlarge: withMinSize(2.6, 22), // never smaller than 22px
+  xxlarge: withMinSize(2.8, 26), // never smaller than 26px
 };
 
 export { rh, rw, rf };

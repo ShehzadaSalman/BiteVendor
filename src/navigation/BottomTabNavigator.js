@@ -7,7 +7,7 @@ import {
 } from '@react-navigation/native';
 import AppNavigator from './AppNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import PharmacyNavigator from './PharmacyNavigator';
+import MenuScreen from '../screens/View/MenuScreen';
 import ProfileNavigator from './ProfileNavigator';
 import { navigationRef } from './navigationRef';
 import { COLORS, FONTS } from '../constants';
@@ -153,8 +153,9 @@ export default function BottomTabNavigator() {
         };
       }}
     >
-      <Tab.Screen name="Menu" component={PharmacyNavigator} />
       <Tab.Screen name="Home" component={AppNavigator} />
+      <Tab.Screen name="Menu" component={MenuScreen} />
+
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );
