@@ -42,7 +42,7 @@ export default function OperationHealthComponent() {
       title: '1- star ratings',
       value: 1,
       icon: require('../../assets/images/overview/sad.png'),
-      navigate: 'OrderHistory',
+      navigate: 'ReviewScreen',
     },
     {
       id: 5,

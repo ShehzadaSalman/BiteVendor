@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/Home/HomeScreen';
 import OrderHistory from '../screens/Home/OrderHistory';
+import ReviewScreen from '../screens/View/ReviewScreen';
 
 //import CartNavigator from './CartNavigator';
 // import RestaurantNavigator from './RestaurantNavigator';
@@ -17,14 +18,14 @@ const AppNavigator = () => (
     <Stack.Screen name="Home" component={HomeScreen} />
 
     <Stack.Screen name="OrderHistory" component={OrderHistory} />
-    {/* <Stack.Screen
-      name="SplashScreen"
-      component={SplashScreen}
+    <Stack.Screen
+      name="ReviewScreen"
+      component={ReviewScreen}
       options={{
         headerShown: false,
       }}
     />
-    <Stack.Screen
+    {/*<Stack.Screen
       name="Authentication"
       component={AuthenticationNavigator}
       options={{
