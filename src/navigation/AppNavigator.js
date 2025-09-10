@@ -1,6 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/Home/HomeScreen';
+import OrderHistory from '../screens/Home/OrderHistory';
 
 //import CartNavigator from './CartNavigator';
 // import RestaurantNavigator from './RestaurantNavigator';
@@ -12,23 +13,11 @@ import HomeScreen from '../screens/HomeScreen';
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => (
-  <Stack.Navigator>
-    <Stack.Screen
-      name="Home"
-      component={HomeScreen}
-      options={{
-        headerShown: false,
-      }}
-    />
-    {/* 
-    <Stack.Screen
-      name="Restaurant"
-      component={RestaurantNavigator}
-      options={{
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Home" component={HomeScreen} />
+
+    <Stack.Screen name="OrderHistory" component={OrderHistory} />
+    {/* <Stack.Screen
       name="SplashScreen"
       component={SplashScreen}
       options={{

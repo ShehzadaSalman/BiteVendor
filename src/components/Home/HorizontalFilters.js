@@ -39,15 +39,15 @@ export default function HorizontalFilters() {
 const styles = StyleSheet.create({
   filterRow: {
     flexDirection: 'row',
-    margin: 12,
+    margin: 4,
     justifyContent: 'space-between',
   },
   filterBtn: {
-    paddingVertical: rh(0.8),
+    paddingVertical: rh(0.6),
     paddingHorizontal: rw(4),
     borderRadius: BORDER_RADIUS.large,
     borderWidth: 1,
-    borderColor: COLORS.borderGrayDark,
+    borderColor: COLORS.borderGray,
     marginBottom: 8,
     shadowColor: '#000',
     shadowOpacity: 0.1,

@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
-import { BORDER_RADIUS } from '../utils/spacing';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS } from '../constants';
 
 const CustomToggle = ({ isActive, setIsActive }) => {

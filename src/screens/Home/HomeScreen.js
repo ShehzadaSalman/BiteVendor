@@ -3,21 +3,21 @@ import {
   View,
   Text,
   Image,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { BarChart, Grid } from 'react-native-svg-charts';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 
-import { COLORS, FONTS } from '../constants';
-import { FONT_SIZE, rh, rw } from '../utils/spacing';
-import BarChartComponent from '../components/Home/BarChartComponent';
-import { FilterChartContext } from '../services/FilterChartProvider';
-import HorizontalFilters from '../components/Home/HorizontalFilters';
+import { COLORS, FONTS } from '../../constants';
+import { FONT_SIZE, rh, rw } from '../../utils/spacing';
+import BarChartComponent from '../../components/Home/BarChartComponent';
+import { FilterChartContext } from '../../services/FilterChartProvider';
+import HorizontalFilters from '../../components/Home/HorizontalFilters';
+import OperationHealthComponent from '../../components/Home/OperationHealthComponent';
+import CustomTitle from '../../components/CustomTitle';
 
 const fetchDashboardData = async filter => {
   return new Promise(resolve => {
@@ -87,12 +87,12 @@ export default function HomeScreen() {
       {/* Colored SafeArea only for top inset */}
       <SafeAreaView style={styles.topSafeArea} edges={['top']} />
 
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.circle}>
             <Image
-              source={require('../assets/images/overview/notification.png')}
+              source={require('../../assets/images/overview/notification.png')}
             />
           </View>
           <View style={styles.circle}>
@@ -101,8 +101,11 @@ export default function HomeScreen() {
         </View>
 
         {/* Title */}
-        <Text style={styles.title}>Overview</Text>
-        <Text style={styles.subtitle}>Summary</Text>
+
+        <CustomTitle variant="title">Overview</CustomTitle>
+        <CustomTitle variant="subtitle" style={{ marginTop: 4 }}>
+          Summary
+        </CustomTitle>
 
         {/* Filters */}
         <HorizontalFilters />
@@ -140,6 +143,7 @@ export default function HomeScreen() {
             </>
           )}
         </View>
+        <OperationHealthComponent />
       </ScrollView>
     </>
   );
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background, // White main background
-    padding: 16,
+    paddingHorizontal: 16,
   },
   header: {
     flexDirection: 'row',
@@ -173,18 +177,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xSmall,
     fontFamily: FONTS.semiBold600,
   },
-  title: {
-    fontWeight: '600',
-    fontSize: FONT_SIZE.large,
-    fontFamily: FONTS.semiBold600,
-    marginTop: 16,
-  },
-  subtitle: {
-    fontWeight: '600',
-    fontSize: FONT_SIZE.medium,
-    fontFamily: FONTS.semiBold600,
-    marginVertical: 12,
-  },
+
   filterRow: { flexDirection: 'row', marginVertical: 12, flexWrap: 'wrap' },
   filterBtn: {
     paddingVertical: 6,
@@ -196,7 +189,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -210,7 +203,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.small,
     fontFamily: FONTS.semiBold600,
     fontWeight: '600',
-    color: COLORS.grayText1,
+    color: COLORS.grayText,
     marginBottom: 12,
   },
   statsRow: {

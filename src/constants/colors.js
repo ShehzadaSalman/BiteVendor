@@ -21,4 +21,5 @@ export const COLORS = {
   white: '#ffffff',
   lightPink: '#FFF9F9',
   black: '#000000',
+  red: '#E53935',
 };

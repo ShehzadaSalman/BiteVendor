@@ -2,7 +2,6 @@ import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { FONT_SIZE } from '../utils/spacing';
 import { FONTS } from '../constants';
-//import { FONTS, FONT_SIZE } from "../theme"; // adjust path
 
 export default function CustomTitle({
   children = 'Welcome to Bite',

@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   chartBarBorder: {
-    height: 200,
+    height: 170,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.borderGray,
     borderRightWidth: 1,

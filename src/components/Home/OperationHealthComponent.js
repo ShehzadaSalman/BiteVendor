@@ -1,41 +1,55 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { FONTS } from '../../constants/fonts'; // adjust path as needed
 import { COLORS } from '../../constants';
 import { BORDER_RADIUS, FONT_SIZE } from '../../utils/spacing';
 import InfoBadge from '../InfoBadge';
+import { useNavigation } from '@react-navigation/native';
 
 export default function OperationHealthComponent() {
+  const navigation = useNavigation();
   const topCards = [
     {
       id: 1,
       title: 'Offline outlets',
       value: 4,
       icon: require('../../assets/images/overview/offline.png'),
+      navigate: 'OrderHistory',
     },
     {
       id: 2,
       title: 'Cancelled orders',
       value: 7,
       icon: require('../../assets/images/overview/cancel.png'),
+      navigate: 'OrderHistory',
     },
     {
       id: 3,
       title: 'Delayed orders',
       value: 4,
       icon: require('../../assets/images/overview/delay.png'),
+      navigate: 'OrderHistory',
     },
     {
       id: 4,
       title: '1- star ratings',
       value: 1,
       icon: require('../../assets/images/overview/sad.png'),
+      navigate: 'OrderHistory',
     },
     {
       id: 5,
       title: 'Inaccurate orders',
       value: 1,
       icon: require('../../assets/images/overview/bag.png'),
+      navigate: 'OrderHistory',
     },
   ];
 
@@ -46,11 +60,15 @@ export default function OperationHealthComponent() {
     >
       {/* Top Status Cards */}
       {topCards.map(item => (
-        <View key={item.id} style={styles.card}>
+        <TouchableOpacity
+          key={item.id}
+          style={styles.card}
+          onPress={() => navigation.navigate(item.navigate)}
+        >
           <Image source={item.icon} style={styles.icon} />
           <Text style={styles.label}>{item.title}</Text>
           <Text style={styles.value}>{item.value}</Text>
-        </View>
+        </TouchableOpacity>
       ))}
 
       {/* Operation Health */}
@@ -90,14 +108,14 @@ const styles = StyleSheet.create({
     //padding: 16,
   },
   card: {
-    height: 75,
+    height: 65,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: COLORS.borderGray,
     borderRadius: BORDER_RADIUS.tiny,
     paddingHorizontal: 18,
-    marginBottom: 12,
+    marginBottom: 6,
   },
   icon: {
     width: 24,

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { COLORS, FONTS } from '../../constants';
 import { FONT_SIZE, rh } from '../../utils/spacing';
 import HeaderComponent from '../../components/HeaderComponent';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomTitle from '../../components/CustomTitle';
 import CustomToggle from '../../components/CustomToggle';
-//import { COLORS, FONT, FONT_SIZE } from '../theme';
 
 const categories = [
   {
