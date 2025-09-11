@@ -37,6 +37,7 @@ export const FONT_SIZE = {
   large: withMinSize(2.2, 18), // never smaller than 18px
   xlarge: withMinSize(2.6, 22), // never smaller than 22px
   xxlarge: withMinSize(2.8, 26), // never smaller than 26px
+  xxxlarge: withMinSize(3, 28), // never smaller than 28px
 };
 
 export { rh, rw, rf };
