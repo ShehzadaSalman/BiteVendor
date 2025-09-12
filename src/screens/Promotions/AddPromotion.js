@@ -15,6 +15,7 @@ import VoucherCard from '../../components/Promotions/VoucherCard';
 import { COLORS, FONTS } from '../../constants';
 import HeaderComponent from '../../components/HeaderComponent';
 import CustomTitle from '../../components/CustomTitle';
+import { FONT_SIZE } from '../../utils/spacing';
 
 export const mockPromotions = [
   {
@@ -58,7 +59,7 @@ export default function AddPromotion({ navigation }) {
         { paddingTop: insets.top, paddingBottom: insets.bottom },
       ]}
     >
-      <View style={{ flex: 1, paddingHorizontal: 16 }}>
+      <View style={styles.container}>
         <HeaderComponent
           title=""
           leftIcon="chevron"
@@ -82,14 +83,9 @@ export default function AddPromotion({ navigation }) {
             />
           )}
           ListEmptyComponent={
-            <Text style={{ textAlign: 'center', marginTop: 20 }}>
-              No Promotion available
-            </Text>
+            <Text style={styles.message}>No Promotion available</Text>
           }
-          contentContainerStyle={{
-            paddingBottom: 20,
-            paddingTop: 50,
-          }}
+          contentContainerStyle={styles.contentStyle}
         />
 
         {/* Button always visible at bottom */}
@@ -108,8 +104,8 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: COLORS.background,
-    //paddingBottom: 100,
   },
+  container: { flex: 1, paddingHorizontal: 16 },
   button: {
     backgroundColor: COLORS.primary,
     paddingVertical: 12,
@@ -120,5 +116,16 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontWeight: 'bold',
     fontSize: 15,
+  },
+  contentStyle: {
+    paddingBottom: 20,
+    paddingTop: 50,
+  },
+  message: {
+    fontFamily: FONTS.bold700,
+    fontSize: FONT_SIZE.xlarge,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });

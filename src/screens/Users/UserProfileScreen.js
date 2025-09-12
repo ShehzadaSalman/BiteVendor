@@ -11,13 +11,14 @@ import { COLORS, FONTS } from '../../constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BORDER_RADIUS, FONT_SIZE } from '../../utils/spacing';
 import { useNavigation } from '@react-navigation/native';
+import PaymentMethodComponent from '../../components/Payment/PaymentMethodComponent';
 
 export default function UserProfileScreen() {
   const navigation = useNavigation();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
       <ScrollView style={styles.container}>
-        <Text style={styles.username}>Name of Person</Text>
+        {/* <Text style={styles.username}>Name of Person</Text> */}
 
         {/* <View style={styles.actionsRow}>
           {[
@@ -47,7 +48,7 @@ export default function UserProfileScreen() {
             </TouchableOpacity>
           ))}
         </View> */}
-
+        {/* 
         <View style={styles.bitCreditBox}>
           <Text
             style={[
@@ -73,14 +74,10 @@ export default function UserProfileScreen() {
             >
               RS. 0.00
             </Text>
-            {/* <Image
-              source={require('../../assets/images/user/right-chevron.png')}
-              style={{ marginLeft: 9 }}
-            /> */}
           </TouchableOpacity>
-        </View>
+        </View> */}
 
-        {/* <Text style={styles.sectionTitle}>General</Text>
+        <Text style={styles.sectionTitle}>General</Text>
         {[
           {
             label: 'View profile',
@@ -100,6 +97,12 @@ export default function UserProfileScreen() {
             navigation: 'TermPolicy',
             arrow: true,
           },
+          {
+            label: 'Add promotions',
+            icon: require('../../assets/images/user/Coupon.png'),
+            navigation: 'Promotions',
+            arrow: true,
+          },
         ].map((item, i) => (
           <TouchableOpacity
             key={i}
@@ -116,7 +119,8 @@ export default function UserProfileScreen() {
               />
             )}
           </TouchableOpacity>
-        ))} */}
+        ))}
+        <PaymentMethodComponent />
 
         {/* <Text style={styles.sectionTitle}>Perks for you</Text>
         {[

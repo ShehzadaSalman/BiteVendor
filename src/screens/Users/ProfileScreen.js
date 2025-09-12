@@ -1,17 +1,10 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  SafeAreaView,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONTS } from '../../constants';
 import HeaderComponent from '../../components/HeaderComponent';
-import { FONT_SIZE, rh, rw } from '../../utils/spacing';
-import InfoBadge from '../../components/InfoBadge';
+import { FONT_SIZE } from '../../utils/spacing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
@@ -39,20 +32,6 @@ export default function ProfileScreen() {
           value="0300-*******"
           onPress={() => navigation.navigate('EditMobile')}
         />
-
-        <Text style={styles.sectionTitle}>Connected accounts</Text>
-        <ConnectedAccount
-          label="Facebook"
-          src={require('../../assets/images/user/fb.png')}
-        />
-        <ConnectedAccount
-          label="Google"
-          src={require('../../assets/images/user/google.png')}
-        />
-        <ConnectedAccount
-          label="Apple"
-          src={require('../../assets/images/user/apple.png')}
-        />
       </View>
     </SafeAreaView>
   );
@@ -68,16 +47,6 @@ const Field = ({ label, value, onPress }) => (
       <Image source={require('../../assets/images/user/pencil.png')} />
     </View>
   </TouchableOpacity>
-);
-
-const ConnectedAccount = ({ label, src }) => (
-  <View style={styles.row}>
-    <View style={styles.connectedRow}>
-      <Image source={src} style={{ marginRight: 13 }} />
-      <Text style={styles.label}>{label}</Text>
-    </View>
-    <InfoBadge text="Connected" />
-  </View>
 );
 
 const styles = StyleSheet.create({
@@ -111,10 +80,5 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semiBold600,
     fontWeight: '600',
     marginRight: 9,
-  },
-  connectedRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
 });
