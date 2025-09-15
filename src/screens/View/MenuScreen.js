@@ -98,7 +98,10 @@ export default function MenuScreen() {
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.price}>Rs. {item.price}</Text>
       </View>
-      <CustomToggle isActive={selected} setIsActive={setSelected} />
+      <CustomToggle
+        isActive={selected.includes(item.id)} // check if this item is selected
+        onToggle={() => toggleSwitch(item.id)} // toggle only this item
+      />
     </View>
   );
 
@@ -107,6 +110,7 @@ export default function MenuScreen() {
       <HeaderComponent
         title=""
         leftIcon="chevron"
+        isCircle
         rightIcon={require('../../assets/images/Header/notification.png')}
       />
 

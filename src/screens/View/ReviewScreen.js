@@ -57,6 +57,7 @@ const ReviewScreen = () => {
     <SafeAreaView style={styles.container}>
       <HeaderComponent
         title=""
+        isCircle
         leftIcon="chevron"
         rightIcon={require('../../assets/images/Header/notification.png')}
       />
@@ -66,30 +67,36 @@ const ReviewScreen = () => {
       <Stars rating={5} />
       <Text style={styles.reviewCount}>300 Reviews</Text>
       {/* Progress Bars */}
+
       {[
         { stars: 5, count: 222 },
         { stars: 4, count: 200 },
         { stars: 3, count: 50 },
         { stars: 2, count: 30 },
         { stars: 1, count: 10 },
-      ].map(({ stars, count }) => (
-        <View key={stars} style={{ flex: 1 }}>
-          <View style={styles.row}>
-            <Text style={styles.starLabel}>{stars}</Text>
-            <Image source={starIcon} style={styles.star} />
-            <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressFill,
-                  { flex: count / 222 }, // proportional fill
-                ]}
-              />
-              <View style={{ flex: 1 - count / 222 }} />
+      ].map(({ stars, count }) => {
+        const max = 222; // your highest count
+        const percentage = (count / max) * 100;
+
+        return (
+          <View key={stars} style={{ marginVertical: 4 }}>
+            <View style={styles.row}>
+              <Text style={styles.starLabel}>{stars}</Text>
+              <Image source={starIcon} style={styles.star} />
+              <View style={styles.progressBar}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { width: `${percentage}%` }, // width instead of flex
+                  ]}
+                />
+              </View>
             </View>
+            <Text style={styles.count}>({count})</Text>
           </View>
-          <Text style={styles.count}>({count})</Text>
-        </View>
-      ))}
+        );
+      })}
+
       {/* Filter Chips */}
       <View style={styles.row}>
         <View style={styles.imageContainer}>
@@ -161,13 +168,16 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 8,
     backgroundColor: COLORS.borderGray,
-    marginLeft: 8,
-    flexDirection: 'row',
+    marginLeft: 6,
+    borderRadius: 1,
     overflow: 'hidden',
   },
   progressFill: {
+    height: '100%',
     backgroundColor: COLORS.primary,
+    borderRadius: 1,
   },
+
   count: {
     marginTop: -5,
     textAlign: 'right',

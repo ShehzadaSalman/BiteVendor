@@ -19,6 +19,7 @@ const PromotionsScreen = ({ navigation }) => {
       <HeaderComponent
         title=""
         leftIcon="chevron"
+        isCircle
         rightIcon={require('../../assets/images/Header/notification.png')}
       />
 

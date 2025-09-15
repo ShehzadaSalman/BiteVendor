@@ -21,7 +21,7 @@ export default function OperationHealthComponent() {
       title: 'Offline outlets',
       value: 4,
       icon: require('../../assets/images/overview/offline.png'),
-      navigate: 'OrderHistory',
+      navigate: 'OutletsScreen',
     },
     {
       id: 2,

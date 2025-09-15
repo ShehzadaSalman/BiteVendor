@@ -84,6 +84,7 @@ export default function OrderHistory() {
       {/* <Text style={styles.title}>Order History</Text> */}
       <HeaderComponent
         title=""
+        isCircle
         leftIcon="chevron"
         rightIcon={require('../../assets/images/Header/notification.png')}
       />

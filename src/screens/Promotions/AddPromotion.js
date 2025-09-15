@@ -62,6 +62,7 @@ export default function AddPromotion({ navigation }) {
       <View style={styles.container}>
         <HeaderComponent
           title=""
+          isCircle
           leftIcon="chevron"
           rightIcon={require('../../assets/images/Header/notification.png')}
         />

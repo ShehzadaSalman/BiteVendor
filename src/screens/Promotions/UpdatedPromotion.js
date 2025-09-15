@@ -33,6 +33,7 @@ export default function UpdatedPromotion({ navigation }) {
       >
         <HeaderComponent
           title=""
+          isCircle
           leftIcon="chevron"
           rightIcon={require('../../assets/images/Header/notification.png')}
         />

@@ -2,11 +2,11 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS } from '../constants';
 
-const CustomToggle = ({ isActive, setIsActive }) => {
+const CustomToggle = ({ isActive, onToggle }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={() => setIsActive(!isActive)}
+      onPress={onToggle}
       style={[
         styles.toggleWrapper,
         isActive ? styles.wrapperActive : styles.wrapperInActive,

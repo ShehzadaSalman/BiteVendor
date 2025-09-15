@@ -24,7 +24,7 @@ export default function EditEmailScreen() {
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <HeaderComponent
         title="Email"
-        leftIcon="chevron"
+        //leftIcon="chevron"
         rightIcon={require('../../assets/images/user/tick.png')}
         onRightPress={() => console.log('Saved')}
       />

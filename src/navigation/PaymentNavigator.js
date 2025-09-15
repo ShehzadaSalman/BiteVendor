@@ -14,10 +14,6 @@ const PaymentNavigator = () => (
     <Stack.Screen name="creditScreen" component={BiteCreditScreen} />
     <Stack.Screen name="GiftCardScreen" component={GiftCardScreen} />
     <Stack.Screen name="TopUpCreditScreen" component={TopUpCreditScreen} />
-    {/* <Stack.Screen
-      name="PaymentMethodScreen"
-      component={PaymentMethodComponent}
-    /> */}
     <Stack.Screen
       name="AddCreditDebitCardScreen"
       component={AddCreditDebitCardScreen}

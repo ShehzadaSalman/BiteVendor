@@ -48,11 +48,10 @@ export default function PaymentMethodsComponent(props) {
           onPress={() => {
             if (item.link) {
               {
-                isCart
-                  ? navigation.navigate('Payment', {
-                      screen: 'AddCreditDebitCardScreen',
-                    })
-                  : navigation.navigate('AddCreditDebitCardScreen');
+                navigation.navigate('Payment', {
+                  screen: 'AddCreditDebitCardScreen',
+                });
+                //navigation.navigate('AddCreditDebitCardScreen');
               }
             } else {
               setSelectedMethod(item.id);
@@ -81,7 +80,7 @@ export default function PaymentMethodsComponent(props) {
           </View>
 
           {item.balance && <Text>{item.balance}</Text>}
-          {item.id === 'cod' ? (
+          {item.id === 'easypaisa' ? (
             <TouchableOpacity
               style={[styles.radioOuter]}
               onPress={() => setSelected(prev => !prev)}
