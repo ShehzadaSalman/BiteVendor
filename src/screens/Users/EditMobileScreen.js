@@ -5,11 +5,11 @@ import {
   TextInput,
   Text,
   StyleSheet,
-  SafeAreaView,
   KeyboardAvoidingView,
   ScrollView,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONTS } from '../../constants';
 import { BORDER_RADIUS, FONT_SIZE } from '../../utils/spacing';
 import AppButton from '../../components/AppButton';

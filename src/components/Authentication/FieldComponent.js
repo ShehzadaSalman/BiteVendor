@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { SCREEN_WIDTH } from '../../utils/layout';
 import { COLORS, FONTS } from '../../constants';
 import { BORDER_RADIUS, FONT_SIZE, rh, rw } from '../../utils/spacing';
 

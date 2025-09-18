@@ -33,33 +33,18 @@ const renderTabIcon =
 
 const hideOnScreens = nestedRouteName => {
   if (
-    nestedRouteName === 'DeliveryTimeScreen' ||
-    nestedRouteName === 'CartScreen' ||
-    nestedRouteName === 'RestaurantDetailScreen' ||
     nestedRouteName === 'OrderPlacedScreen' ||
-    nestedRouteName === 'CartDeliveryAddressScreen' ||
-    nestedRouteName === 'CartPaymentMethodScreen' ||
-    nestedRouteName === 'creditScreen' ||
-    nestedRouteName === 'GiftCardScreen' ||
-    nestedRouteName === 'TopUpCreditScreen' ||
     nestedRouteName === 'PaymentMethodScreen' ||
     nestedRouteName === 'HelpCenter' ||
     nestedRouteName === 'Profile' ||
-    nestedRouteName === 'PaymentNavigator' ||
-    nestedRouteName === 'VouchersScreen' ||
-    nestedRouteName === 'ReferFriend' ||
-    nestedRouteName === 'HowItWorks' ||
-    nestedRouteName === 'AddAddress' ||
-    nestedRouteName === 'MapAddress' ||
-    nestedRouteName === 'Favourite' ||
+    nestedRouteName === 'Payment' ||
     nestedRouteName === 'EditName' ||
     nestedRouteName === 'EditEmail' ||
     nestedRouteName === 'VerifyEmail' ||
     nestedRouteName === 'EditMobile' ||
     nestedRouteName === 'PastOrdersScreen' ||
     nestedRouteName === 'TermPolicy' ||
-    nestedRouteName === 'TermsConditions' ||
-    nestedRouteName === 'DataPolicy'
+    nestedRouteName === 'TermsConditions'
   )
     return true;
   else return false;
@@ -155,7 +140,6 @@ export default function BottomTabNavigator() {
     >
       <Tab.Screen name="Home" component={AppNavigator} />
       <Tab.Screen name="Menu" component={MenuScreen} />
-
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );

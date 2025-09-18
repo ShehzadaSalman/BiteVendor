@@ -29,6 +29,7 @@ export default function OutletsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <HeaderComponent
+        title="Outlets"
         leftIcon="chevron"
         bottomBorder={true}
         isCircle
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.medium,
     paddingVertical: 10,
     alignItems: 'center',
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   buttonText: {
     color: COLORS.white,

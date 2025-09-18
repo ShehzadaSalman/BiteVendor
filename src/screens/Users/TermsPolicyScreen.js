@@ -1,13 +1,9 @@
 import React from 'react';
+import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import {
-  View,
-  Image,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
   SafeAreaView,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { COLORS, FONTS } from '../../constants';
 import HeaderComponent from '../../components/HeaderComponent';
 import { FONT_SIZE } from '../../utils/spacing';
@@ -20,7 +16,7 @@ const TermsPolicyScreen = () => {
     <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
 
-      <HeaderComponent title="Terms & policies" />
+      <HeaderComponent title="Terms & policies" bottomBorder={true} />
       <View style={{ marginTop: 20 }}>
         {/* Options */}
         <TouchableOpacity
@@ -28,17 +24,6 @@ const TermsPolicyScreen = () => {
           onPress={() => navigation.navigate('TermsConditions')}
         >
           <Text style={styles.optionText}>Terms & conditions</Text>
-          <Image
-            source={require('../../assets/images/HelpCenter/right-chevron.png')}
-            style={styles.arrow}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.option}
-          onPress={() => navigation.navigate('DataPolicy')}
-        >
-          <Text style={styles.optionText}>Data policy</Text>
           <Image
             source={require('../../assets/images/HelpCenter/right-chevron.png')}
             style={styles.arrow}

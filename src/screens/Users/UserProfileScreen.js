@@ -9,74 +9,15 @@ import {
 } from 'react-native';
 import { COLORS, FONTS } from '../../constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BORDER_RADIUS, FONT_SIZE } from '../../utils/spacing';
+import { FONT_SIZE } from '../../utils/spacing';
 import { useNavigation } from '@react-navigation/native';
 import PaymentMethodComponent from '../../components/Payment/PaymentMethodComponent';
 
 export default function UserProfileScreen() {
   const navigation = useNavigation();
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
+    <SafeAreaView style={styles.safeAreaView}>
       <ScrollView style={styles.container}>
-        {/* <Text style={styles.username}>Name of Person</Text> */}
-
-        {/* <View style={styles.actionsRow}>
-          {[
-            {
-              label: 'Orders',
-              icon: require('../../assets/images/user/orders.png'),
-              navigation: 'PastOrdersScreen',
-            },
-            {
-              label: 'Favourite',
-              icon: require('../../assets/images/user/favorites.png'),
-              navigation: 'Favourite',
-            },
-            {
-              label: 'Address',
-              icon: require('../../assets/images/user/address.png'),
-              navigation: 'AddAddress',
-            },
-          ].map((item, i) => (
-            <TouchableOpacity
-              key={i}
-              style={styles.box}
-              onPress={() => navigation.navigate(item.navigation)}
-            >
-              <Image source={item.icon} style={styles.boxIcon} />
-              <Text style={styles.boxLabel}>{item.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View> */}
-        {/* 
-        <View style={styles.bitCreditBox}>
-          <Text
-            style={[
-              styles.biteCreditText,
-              {
-                color: COLORS.grayText1,
-              },
-            ]}
-          >
-            Bite Credit
-          </Text>
-          <TouchableOpacity
-            style={{ flexDirection: 'row', alignItems: 'center' }}
-            onPress={() => navigation.navigate('PaymentNavigator')}
-          >
-            <Text
-              style={[
-                styles.biteCreditText,
-                {
-                  color: COLORS.black,
-                },
-              ]}
-            >
-              RS. 0.00
-            </Text>
-          </TouchableOpacity>
-        </View> */}
-
         <Text style={styles.sectionTitle}>General</Text>
         {[
           {
@@ -121,71 +62,15 @@ export default function UserProfileScreen() {
           </TouchableOpacity>
         ))}
         <PaymentMethodComponent />
-
-        {/* <Text style={styles.sectionTitle}>Perks for you</Text>
-        {[
-          {
-            label: 'Vouchers',
-            icon: require('../../assets/images/user/vouchers.png'),
-            navigation: 'VouchersScreen',
-          },
-          {
-            label: 'Invite friends',
-            icon: require('../../assets/images/user/invitesFrnds.png'),
-            navigation: 'ReferFriend',
-          },
-        ].map((item, i) => (
-          <TouchableOpacity
-            key={i}
-            style={styles.listItem}
-            onPress={() => navigation.navigate(item.navigation)}
-          >
-            <View style={styles.listLeft}>
-              <Image source={item.icon} style={styles.listIcon} />
-              <Text style={styles.listLabel}>{item.label}</Text>
-            </View>
-            <Image
-              source={require('../../assets/images/user/right-chevron.png')}
-            />
-          </TouchableOpacity>
-        ))} */}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeAreaView: { flex: 1, backgroundColor: COLORS.background },
   container: { padding: 20, backgroundColor: COLORS.white },
-  username: {
-    fontSize: FONT_SIZE.large,
-    fontFamily: FONTS.bold700,
-    marginBottom: 20,
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 30,
-  },
-  box: {
-    width: 106,
-    height: 85,
-    borderRadius: BORDER_RADIUS.tiny,
-    borderWidth: 1,
-    borderColor: COLORS.gray,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.lightPink,
-  },
-  boxIcon: {
-    // width: 24, height: 24,
-    marginBottom: 8,
-  },
-  boxLabel: {
-    fontSize: FONT_SIZE.xSmall,
-    fontFamily: FONTS.semiBold600,
-    fontWeight: '600',
-    color: COLORS.text,
-  },
+
   sectionTitle: {
     marginTop: 25,
     fontSize: FONT_SIZE.large,
@@ -216,20 +101,5 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semiBold600,
     fontWeight: '600',
     color: COLORS.grayText1,
-  },
-  bitCreditBox: {
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderRadius: BORDER_RADIUS.tiny,
-    borderWidth: 1,
-    borderColor: COLORS.gray,
-    alignItems: 'center',
-    backgroundColor: COLORS.lightPink,
-  },
-  biteCreditText: {
-    fontFamily: FONTS.semiBold600,
-    fontSize: FONT_SIZE.medium,
-    fontWeight: '600',
   },
 });

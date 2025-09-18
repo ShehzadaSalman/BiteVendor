@@ -12,9 +12,9 @@ export default function ProfileScreen() {
   const inets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={[styles.safeArea, { paddingTop: inets.top }]}>
+    <SafeAreaView style={[styles.safeArea, {}]}>
+      <HeaderComponent title="Profile" bottomBorder={true} />
       <View style={styles.container}>
-        <HeaderComponent title="Profile" />
         <Text style={styles.sectionTitle}>Personal Details</Text>
 
         <Field

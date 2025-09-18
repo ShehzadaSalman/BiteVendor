@@ -5,10 +5,11 @@ import {
   TextInput,
   Text,
   StyleSheet,
-  SafeAreaView,
   KeyboardAvoidingView,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { COLORS, FONTS } from '../../constants';
 import { BORDER_RADIUS, FONT_SIZE } from '../../utils/spacing';
 import AppButton from '../../components/AppButton';
@@ -24,7 +25,8 @@ export default function EditEmailScreen() {
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <HeaderComponent
         title="Email"
-        //leftIcon="chevron"
+        leftIcon="chevron"
+        bottomBorder={true}
         rightIcon={require('../../assets/images/user/tick.png')}
         onRightPress={() => console.log('Saved')}
       />

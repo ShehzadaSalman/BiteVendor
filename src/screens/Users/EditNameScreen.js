@@ -26,7 +26,8 @@ export default function EditNameScreen() {
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <HeaderComponent
         title="Name"
-        //leftIcon="chevron"
+        bottomBorder={true}
+        leftIcon="chevron"
         rightIcon={require('../../assets/images/user/tick.png')}
         onRightPress={() => console.log('Saved')}
       />

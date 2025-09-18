@@ -60,6 +60,7 @@ export default function PhoneSigninComponent() {
         onPress={handleLoginWithEmailPress}
         backgroundColor={COLORS.white}
         textColor={COLORS.black}
+        image={require('../../assets/images/Authentication/black-email.png')}
       />
 
       <View style={{ marginTop: 15 }}>
