@@ -8,10 +8,17 @@ import { FONT_SIZE } from '../../utils/spacing';
 import AppButton from '../AppButton';
 import FieldComponent from './FieldComponent';
 import { signIn } from '../../redux/slices/authSlice';
+import axios from 'axios';
 
 export default function SigninComponent() {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    general: '',
+  });
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -19,10 +26,60 @@ export default function SigninComponent() {
     navigation.navigate('PhoneLoginScreen');
   };
 
-  const handleLoginPress = () => {
-    const success = true; // replace with real check
-    if (success) {
-      dispatch(signIn(true)); // switches nav to BottomTabNavigator
+  const validate = () => {
+    const nextErrors = { email: '', password: '', general: '' };
+    const trimmedEmail = (email || '').trim();
+    const trimmedPassword = (password || '').trim();
+    if (!trimmedEmail) {
+      nextErrors.email = 'Email is required';
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmedEmail)) {
+        nextErrors.email = 'Enter a valid email address';
+      }
+    }
+    if (!trimmedPassword) {
+      nextErrors.password = 'Password is required';
+    } else if (trimmedPassword.length < 6) {
+      nextErrors.password = 'Password must be at least 6 characters';
+    }
+    setErrors(nextErrors);
+    return !nextErrors.email && !nextErrors.password;
+  };
+
+  const handleLoginPress = async () => {
+    if (loading) return;
+    setErrors({ email: '', password: '', general: '' });
+    if (!validate()) return;
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        'https://development.bite.com.pk/api/vendor/auth/login',
+        { email, password },
+        { timeout: 15000 },
+      );
+      const data = response?.data;
+      if (data?.status) {
+        const token = data.token;
+        const vendor = data.vendor;
+        // Set default Authorization header for subsequent requests
+        if (token) {
+          axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+        }
+        dispatch(signIn({ token, vendor }));
+      } else {
+        setErrors(prev => ({
+          ...prev,
+          general: data?.message || 'Login failed',
+        }));
+      }
+    } catch (err) {
+      setErrors(prev => ({
+        ...prev,
+        general: 'Unable to login. Please try again.',
+      }));
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -35,6 +92,7 @@ export default function SigninComponent() {
         value={email}
         onChangeText={setEmail}
       />
+      {!!errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
       <FieldComponent
         label="Password"
@@ -42,32 +100,45 @@ export default function SigninComponent() {
         value={password}
         onChangeText={setPassword}
       />
+      {!!errors.password && (
+        <Text style={styles.errorText}>{errors.password}</Text>
+      )}
+
+      {!!errors.general && (
+        <Text style={[styles.errorText, { textAlign: 'center' }]}>
+          {errors.general}
+        </Text>
+      )}
 
       <AppButton
-        title="Log In"
+        title={loading ? 'Logging in…' : 'Log In'}
         style={{ marginVertical: 15 }}
         onPress={handleLoginPress}
       />
 
-      <View style={styles.divider}>
-        <Image
-          source={require('../../assets/images/Authentication/divider.png')}
-          style={{ width: 150, marginRight: 15 }}
-        />
-        <Text style={styles.text}>or</Text>
-        <Image
-          source={require('../../assets/images/Authentication/divider.png')}
-          style={{ width: 150, marginLeft: 15 }}
-        />
-      </View>
-
-      <AppButton
-        title="Log in with phone number"
-        style={{ marginTop: 15 }}
-        onPress={handlePhonePress}
-        backgroundColor={COLORS.white}
-        textColor={COLORS.black}
-      />
+      {/**
+       * Divider and Phone login temporarily disabled per requirement
+       *
+       * <View style={styles.divider}>
+       *   <Image
+       *     source={require('../../assets/images/Authentication/divider.png')}
+       *     style={{ width: 150, marginRight: 15 }}
+       *   />
+       *   <Text style={styles.text}>or</Text>
+       *   <Image
+       *     source={require('../../assets/images/Authentication/divider.png')}
+       *     style={{ width: 150, marginLeft: 15 }}
+       *   />
+       * </View>
+       *
+       * <AppButton
+       *   title="Log in with phone number"
+       *   style={{ marginTop: 15 }}
+       *   onPress={handlePhonePress}
+       *   backgroundColor={COLORS.white}
+       *   textColor={COLORS.black}
+       * />
+       */}
 
       <View style={{ marginTop: 15 }}>
         <Text style={styles.subText}>
@@ -97,6 +168,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     includeFontPadding: false,
     textAlignVertical: 'center',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: FONT_SIZE.small,
+    fontFamily: FONTS.medium500,
+    marginTop: -15,
+    marginBottom: 10,
   },
   text: {
     fontFamily: FONTS.semiBold600,

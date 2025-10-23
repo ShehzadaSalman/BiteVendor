@@ -6,10 +6,15 @@ import { COLORS, FONTS } from '../../constants';
 import HeaderComponent from '../../components/HeaderComponent';
 import { FONT_SIZE } from '../../utils/spacing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useVendor } from '../../services/VendorProvider';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const inets = useSafeAreaInsets();
+  const { vendor, loading } = useVendor();
+  const displayName = vendor?.name || vendor?.restaurant_name || '—';
+  const displayEmail = vendor?.email || '—';
+  const displayPhone = vendor?.phone || vendor?.alternate_phone || '—';
 
   return (
     <SafeAreaView style={[styles.safeArea, {}]}>
@@ -19,17 +24,17 @@ export default function ProfileScreen() {
 
         <Field
           label="Name"
-          value="Name of person"
+          value={displayName}
           onPress={() => navigation.navigate('EditName')}
         />
         <Field
           label="Email"
-          value="person@gmail.com"
+          value={displayEmail}
           onPress={() => navigation.navigate('EditEmail')}
         />
         <Field
           label="Mobile No"
-          value="0300-*******"
+          value={displayPhone}
           onPress={() => navigation.navigate('EditMobile')}
         />
       </View>

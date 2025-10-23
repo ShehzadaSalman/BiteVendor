@@ -18,6 +18,7 @@ import { FilterChartContext } from '../../services/FilterChartProvider';
 import HorizontalFilters from '../../components/Home/HorizontalFilters';
 import OperationHealthComponent from '../../components/Home/OperationHealthComponent';
 import CustomTitle from '../../components/CustomTitle';
+import { useVendor } from '../../services/VendorProvider';
 
 const fetchDashboardData = async filter => {
   return new Promise(resolve => {
@@ -61,6 +62,7 @@ const fetchDashboardData = async filter => {
 export default function HomeScreen() {
   // const navigation = useNavigation();
   const { selected } = useContext(FilterChartContext);
+  const { vendor } = useVendor();
   // const orders = useSelector(state => state.orders.list);
   // const cusines = useSelector(state => state.cuisines.list);
   // const restaurants = useSelector(state => state.restaurants.list);
@@ -96,7 +98,18 @@ export default function HomeScreen() {
             />
           </View>
           <View style={styles.circle}>
-            <Text style={styles.profileText}>Ys</Text>
+            <Text style={styles.profileText}>
+              {(() => {
+                const name = vendor?.name || vendor?.restaurant_name || '';
+                const parts = name.trim().split(' ').filter(Boolean);
+                if (parts.length === 0) return '';
+                if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+                return (
+                  parts[0].charAt(0).toUpperCase() +
+                  parts[parts.length - 1].charAt(0).toUpperCase()
+                );
+              })()}
+            </Text>
           </View>
         </View>
 

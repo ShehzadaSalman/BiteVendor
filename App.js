@@ -4,16 +4,22 @@ import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useSelector } from 'react-redux';
 
+import axios from 'axios';
 import BottomTabNavigator from './src/navigation/BottomTabNavigator';
 import AuthenticationNavigator from './src/navigation/AuthenticationNavigator';
 import SplashScreen from './src/screens/Authentication/SplashScreen';
 import { navigationRef } from './src/navigation/navigationRef';
 import { FilterChartProvider } from './src/services/FilterChartProvider';
-
+import { VendorProvider } from './src/services/VendorProvider';
 import { store } from './src/redux/store';
+
 function RootNavigation() {
   const [loading, setLoading] = useState(true);
   const isSignedIn = useSelector(state => state.auth.isSignedIn); // Change based on your redux state
+
+  useEffect(() => {
+    // Push notifications via Firebase have been removed.
+  }, []);
 
   useEffect(() => {
     // Simulate loading splash (e.g. check auth token, preload assets)
@@ -36,30 +42,16 @@ function App() {
       <SafeAreaProvider>
         <Provider store={store}>
           <FilterChartProvider>
-            <NavigationContainer ref={navigationRef}>
-              <RootNavigation />
-            </NavigationContainer>
+            <VendorProvider>
+              <NavigationContainer ref={navigationRef}>
+                <RootNavigation />
+              </NavigationContainer>
+            </VendorProvider>
           </FilterChartProvider>
         </Provider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
-
-// function App() {
-//   return (
-//     <SafeAreaProvider>
-//       <Provider store={store}>
-//         <GestureHandlerRootView style={{ flex: 1 }}>
-//           <FilterChartProvider>
-//             <NavigationContainer ref={navigationRef}>
-//               <RootNavigation />
-//             </NavigationContainer>
-//           </FilterChartProvider>
-//         </GestureHandlerRootView>
-//       </Provider>
-//     </SafeAreaProvider>
-//   );
-// }
 
 export default App;
