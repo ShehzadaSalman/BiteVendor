@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -15,7 +16,7 @@ import { COLORS, FONTS } from '../../constants';
 import { FONT_SIZE, rh, rw } from '../../utils/spacing';
 import BarChartComponent from '../../components/Home/BarChartComponent';
 import { FilterChartContext } from '../../services/FilterChartProvider';
-import HorizontalFilters from '../../components/Home/HorizontalFilters';
+// import HorizontalFilters from '../../components/Home/HorizontalFilters';
 import OperationHealthComponent from '../../components/Home/OperationHealthComponent';
 import CustomTitle from '../../components/CustomTitle';
 import { useVendor } from '../../services/VendorProvider';
@@ -62,7 +63,8 @@ const fetchDashboardData = async filter => {
 export default function HomeScreen() {
   // const navigation = useNavigation();
   const { selected } = useContext(FilterChartContext);
-  const { vendor } = useVendor();
+  const { vendor, logout } = useVendor();
+  const [menuOpen, setMenuOpen] = useState(false);
   // const orders = useSelector(state => state.orders.list);
   // const cusines = useSelector(state => state.cuisines.list);
   // const restaurants = useSelector(state => state.restaurants.list);
@@ -85,7 +87,7 @@ export default function HomeScreen() {
     loadData();
   }, [selected]);
   return (
-    <>
+    <View style={{ flex: 1 }}>
       {/* Colored SafeArea only for top inset */}
       <SafeAreaView style={styles.topSafeArea} edges={['top']} />
 
@@ -97,19 +99,26 @@ export default function HomeScreen() {
               source={require('../../assets/images/overview/notification.png')}
             />
           </View>
-          <View style={styles.circle}>
-            <Text style={styles.profileText}>
-              {(() => {
-                const name = vendor?.name || vendor?.restaurant_name || '';
-                const parts = name.trim().split(' ').filter(Boolean);
-                if (parts.length === 0) return '';
-                if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-                return (
-                  parts[0].charAt(0).toUpperCase() +
-                  parts[parts.length - 1].charAt(0).toUpperCase()
-                );
-              })()}
-            </Text>
+          <View style={{ position: 'relative' }}>
+            <View style={styles.circle}>
+              <Text
+                style={styles.profileText}
+                onPress={() => setMenuOpen(!menuOpen)}
+              >
+                {(() => {
+                  const name = vendor?.name || vendor?.restaurant_name || '';
+                  const parts = name.trim().split(' ').filter(Boolean);
+                  if (parts.length === 0) return '';
+                  if (parts.length === 1)
+                    return parts[0].charAt(0).toUpperCase();
+                  return (
+                    parts[0].charAt(0).toUpperCase() +
+                    parts[parts.length - 1].charAt(0).toUpperCase()
+                  );
+                })()}
+              </Text>
+            </View>
+            {/* dropdown moved to root overlay to avoid layering issues */}
           </View>
         </View>
 
@@ -120,8 +129,7 @@ export default function HomeScreen() {
           Summary
         </CustomTitle>
 
-        {/* Filters */}
-        <HorizontalFilters />
+        {/* Filters removed as requested */}
 
         {/* Stats Card */}
         <View style={styles.card}>
@@ -158,7 +166,28 @@ export default function HomeScreen() {
         </View>
         <OperationHealthComponent />
       </ScrollView>
-    </>
+      {menuOpen && (
+        <View style={styles.menuContainer} pointerEvents="box-none">
+          <TouchableWithoutFeedback onPress={() => setMenuOpen(false)}>
+            <View style={styles.menuOverlay} />
+          </TouchableWithoutFeedback>
+          <View style={[styles.dropdown, { top: 60, right: 16 }]}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setMenuOpen(false);
+                logout();
+              }}
+            >
+              <View>
+                <Text style={[styles.dropdownItem, { color: COLORS.primary }]}>
+                  Logout
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -183,6 +212,27 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: 50,
+    right: 0,
+    backgroundColor: COLORS.white,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.borderGray,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    minWidth: 140,
+    zIndex: 1000,
+  },
+  dropdownItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    fontFamily: FONTS.semiBold600,
+    fontSize: FONT_SIZE.normal,
   },
   profileText: {
     color: COLORS.white,
@@ -235,5 +285,22 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontWeight: '800',
     marginTop: 4,
+  },
+  menuContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 1000,
+  },
+  menuOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'transparent',
+    zIndex: 999,
   },
 });
