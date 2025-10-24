@@ -11,6 +11,7 @@ import SplashScreen from './src/screens/Authentication/SplashScreen';
 import { navigationRef } from './src/navigation/navigationRef';
 import { FilterChartProvider } from './src/services/FilterChartProvider';
 import { VendorProvider } from './src/services/VendorProvider';
+import { MenuProvider } from './src/services/MenuProvider';
 import { store } from './src/redux/store';
 
 function RootNavigation() {
@@ -43,9 +44,11 @@ function App() {
         <Provider store={store}>
           <FilterChartProvider>
             <VendorProvider>
-              <NavigationContainer ref={navigationRef}>
-                <RootNavigation />
-              </NavigationContainer>
+              <MenuProvider>
+                <NavigationContainer ref={navigationRef}>
+                  <RootNavigation />
+                </NavigationContainer>
+              </MenuProvider>
             </VendorProvider>
           </FilterChartProvider>
         </Provider>

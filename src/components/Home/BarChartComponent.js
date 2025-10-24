@@ -5,7 +5,13 @@ import { COLORS, FONTS } from '../../constants';
 import { FONT_SIZE } from '../../utils/spacing';
 
 export default function BarChartComponent({ chartData }) {
-  const yLabels = [0, 100, 500, 800, 1000]; // vertical axis labels
+  const maxValue = Math.max(
+    0,
+    ...(chartData || []).map(i => (typeof i === 'number' ? i : i?.value || 0)),
+  );
+  const dynamicMax = Math.ceil((maxValue || 1000) / 100) * 100; // round up to nearest 100
+  const step = Math.max(1, Math.floor(dynamicMax / 4));
+  const yLabels = [0, step, step * 2, step * 3, step * 4];
 
   const normalizedData =
     chartData?.map(item =>
@@ -13,6 +19,9 @@ export default function BarChartComponent({ chartData }) {
     ) || [];
 
   const values = normalizedData.map(item => item.value);
+  const xLabels = (chartData || []).map(item =>
+    typeof item === 'number' ? '' : item?.label || '',
+  );
 
   return (
     <View style={styles.wrapper}>
@@ -37,15 +46,19 @@ export default function BarChartComponent({ chartData }) {
             spacingInner={0.5}
             spacingOuter={0.3}
             yMin={0}
-            yMax={1000}
+            yMax={dynamicMax}
           >
             <Grid />
           </BarChart>
 
           {/* X Axis labels under chart */}
           <View style={styles.xLabels}>
-            {['08.00', '10.00', '12.00', '14.00', '16.00'].map(t => (
-              <Text key={t} style={styles.axisLable}>
+            {xLabels.map((t, idx) => (
+              <Text
+                key={`${t}-${idx}`}
+                style={styles.axisLable}
+                numberOfLines={1}
+              >
                 {t}
               </Text>
             ))}

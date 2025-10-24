@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -12,69 +12,60 @@ import { COLORS, FONTS } from '../../constants';
 import HeaderComponent from '../../components/HeaderComponent';
 import CustomTitle from '../../components/CustomTitle';
 import { FONT_SIZE } from '../../utils/spacing';
+import { fetchOrders } from '../../services/DashboardService';
 
 const FILTERS = ['Today', 'Yesterday', 'Last 7 days', '30 days'];
 
-const orders = [
-  {
-    id: '1',
-    status: 'IN PROGRESS',
-    code: 'x1db-a5k7',
-    time: 'Today 12:14',
-    price: 2500,
-  },
-  {
-    id: '2',
-    status: 'CANCELLED',
-    code: 'x1db-a5k7',
-    time: 'Today 12:14',
-    price: 2500,
-  },
-  {
-    id: '3',
-    status: 'PICK-UP',
-    extraStatus: 'COMPLETED',
-    code: 'x1db-a5k7',
-    time: 'Today 12:14',
-    price: 2500,
-  },
-  {
-    id: '4',
-    status: 'COMPLETED',
-    code: 'x1db-a5k7',
-    time: 'Today 12:14',
-    price: 2500,
-  },
-  {
-    id: '5',
-    status: 'COMPLETED',
-    code: 'x1db-a5k7',
-    time: 'Today 12:14',
-    price: 2500,
-  },
-];
+// API-driven orders state
+const initialPageState = { page: 1, totalPages: 1 };
 
 export default function OrderHistory() {
   const [selectedFilter, setSelectedFilter] = useState('Today');
+  const [orders, setOrders] = useState([]);
+  const [pageInfo, setPageInfo] = useState(initialPageState);
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState('');
+
+  const loadPage = useCallback(async (page = 1) => {
+    try {
+      if (page === 1) setLoading(true);
+      else setLoadingMore(true);
+      setError('');
+      const res = await fetchOrders(page);
+      const nextOrders = Array.isArray(res.orders) ? res.orders : [];
+      setOrders(prev => (page === 1 ? nextOrders : [...prev, ...nextOrders]));
+      setPageInfo({ page: res.currentPage, totalPages: res.totalPages });
+    } catch (e) {
+      setError(e?.message || 'Failed to load orders');
+      if (page === 1) setOrders([]);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadPage(1);
+  }, [loadPage]);
 
   const renderOrder = ({ item }) => (
     <View style={styles.orderCard}>
       <View style={styles.statusRow}>
         <View style={[styles.badge, getStatusStyle(item.status)]}>
-          <Text style={styles.badgeText}>{item.status}</Text>
+          <Text style={styles.badgeText}>
+            {String(item.status || '').toUpperCase()}
+          </Text>
         </View>
-        {item.extraStatus && (
-          <View style={[styles.badge, getStatusStyle(item.extraStatus)]}>
-            <Text style={styles.badgeText}>{item.extraStatus}</Text>
-          </View>
-        )}
       </View>
       <View style={styles.orderInfo}>
         <View>
-          <Text style={styles.orderId}>{item.code}</Text>
-          <Text style={styles.orderTime}>{item.time}</Text>
+          <Text style={styles.orderId}>{item.order_number}</Text>
+          <Text style={styles.orderTime}>
+            {new Date(item.created_at).toLocaleString()}
+          </Text>
         </View>
-        <Text style={styles.price}>Rs. {item.price}</Text>
+        <Text style={styles.price}>Rs. {Number(item.total_amount || 0)}</Text>
       </View>
     </View>
   );
@@ -114,14 +105,34 @@ export default function OrderHistory() {
         ))}
       </View>
 
-      <Text style={styles.sectionTitle}>Today</Text>
+      <Text style={styles.sectionTitle}>Recent</Text>
 
-      <FlatList
-        data={orders}
-        keyExtractor={item => item.id}
-        renderItem={renderOrder}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-      />
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : error ? (
+        <Text style={{ color: COLORS.red }}>{error}</Text>
+      ) : (
+        <FlatList
+          data={orders}
+          keyExtractor={item => String(item.id)}
+          renderItem={renderOrder}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          onEndReachedThreshold={0.4}
+          onEndReached={() => {
+            if (!loadingMore && pageInfo.page < pageInfo.totalPages) {
+              loadPage(pageInfo.page + 1);
+            }
+          }}
+          ListFooterComponent={
+            loadingMore ? <Text>Loading more...</Text> : null
+          }
+          ListEmptyComponent={
+            !loading && (
+              <Text style={{ color: COLORS.grayText }}>No orders found.</Text>
+            )
+          }
+        />
+      )}
     </SafeAreaView>
   );
 }

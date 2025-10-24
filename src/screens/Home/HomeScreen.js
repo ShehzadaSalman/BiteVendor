@@ -15,49 +15,29 @@ import { useNavigation } from '@react-navigation/native';
 import { COLORS, FONTS } from '../../constants';
 import { FONT_SIZE, rh, rw } from '../../utils/spacing';
 import BarChartComponent from '../../components/Home/BarChartComponent';
+import HorizontalFilters from '../../components/Home/HorizontalFilters';
 import { FilterChartContext } from '../../services/FilterChartProvider';
 // import HorizontalFilters from '../../components/Home/HorizontalFilters';
 import OperationHealthComponent from '../../components/Home/OperationHealthComponent';
 import CustomTitle from '../../components/CustomTitle';
 import { useVendor } from '../../services/VendorProvider';
+import { fetchDashboard } from '../../services/DashboardService';
 
-const fetchDashboardData = async filter => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      switch (filter) {
-        case 'Today':
-          resolve({
-            orders: 450,
-            revenue: 120000,
-            chartData: [900, 1100, 1150, 950, 600, 900, 1100, 1150, 950, 600],
-          });
-          break;
-        case 'Yesterday':
-          resolve({
-            orders: 380,
-            revenue: 100000,
-            chartData: [800, 950, 1000, 700, 850, 800, 950, 1000, 700, 850],
-          });
-          break;
-        case '7 days':
-          resolve({
-            orders: 2500,
-            revenue: 780000,
-            chartData: [500, 700, 1200, 900, 1000],
-          });
-          break;
-        case '30 days':
-          resolve({
-            orders: 10000,
-            revenue: 3100000,
-            chartData: [1000, 1400, 900, 1600, 1300],
-          });
-          break;
-        default:
-          resolve({ orders: 0, revenue: 0, chartData: [] });
-      }
-    }, 800); // simulate network delay
-  });
+const mapFilterToRange = filter => {
+  switch (filter) {
+    case 'Today':
+      return 'today';
+    case 'Yesterday':
+      return 'yesterday';
+    case '7 days':
+      return '7days';
+    case '30 days':
+      return '30days';
+    case 'All':
+      return 'all';
+    default:
+      return 'all';
+  }
 };
 
 export default function HomeScreen() {
@@ -74,15 +54,35 @@ export default function HomeScreen() {
   const [orders, setOrders] = useState(0);
   const [revenue, setRevenue] = useState(0);
   const [chartData, setChartData] = useState([]);
+  const [summary, setSummary] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
-      const res = await fetchDashboardData(selected);
-      setOrders(res.orders);
-      setRevenue(res.revenue);
-      setChartData(res.chartData);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const range = mapFilterToRange(selected);
+        const res = await fetchDashboard(range);
+        const data = res?.data || {};
+        const summaryData = data?.summary || {};
+        setSummary(summaryData);
+        setOrders(summaryData?.total_orders || 0);
+        setRevenue(summaryData?.revenue || 0);
+        const chart = Array.isArray(data?.chart) ? data.chart : [];
+        // map to values for chart component; it expects [{ value }]
+        setChartData(
+          chart.map(item => ({
+            value: item?.orders || 0,
+            label: item?.period,
+          })),
+        );
+      } catch (e) {
+        setSummary(null);
+        setOrders(0);
+        setRevenue(0);
+        setChartData([]);
+      } finally {
+        setLoading(false);
+      }
     };
     loadData();
   }, [selected]);
@@ -129,7 +129,7 @@ export default function HomeScreen() {
           Summary
         </CustomTitle>
 
-        {/* Filters removed as requested */}
+        <HorizontalFilters />
 
         {/* Stats Card */}
         <View style={styles.card}>
@@ -141,9 +141,6 @@ export default function HomeScreen() {
             />
           ) : (
             <>
-              <Text style={styles.cardDesc}>
-                Lorem ipsum is a dummy or placeholder text.
-              </Text>
               <View style={styles.statsRow}>
                 <View style={styles.statsRow}>
                   <View>
@@ -164,7 +161,7 @@ export default function HomeScreen() {
             </>
           )}
         </View>
-        <OperationHealthComponent />
+        <OperationHealthComponent summary={summary} />
       </ScrollView>
       {menuOpen && (
         <View style={styles.menuContainer} pointerEvents="box-none">

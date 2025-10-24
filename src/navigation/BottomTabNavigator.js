@@ -8,6 +8,7 @@ import {
 import AppNavigator from './AppNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MenuScreen from '../screens/View/MenuScreen';
+import OrderHistory from '../screens/Home/OrderHistory';
 import ProfileNavigator from './ProfileNavigator';
 import { navigationRef } from './navigationRef';
 import { COLORS, FONTS } from '../constants';
@@ -19,6 +20,7 @@ const tabIcons = {
   Home: require('../assets/images/BottomTabs/Home.png'),
   Menu: require('../assets/images/BottomTabs/Menu.png'),
   Profile: require('../assets/images/BottomTabs/Profile.png'),
+  Orders: require('../assets/images/user/orders.png'),
 };
 const renderTabIcon =
   routeName =>
@@ -140,6 +142,7 @@ export default function BottomTabNavigator() {
     >
       <Tab.Screen name="Home" component={AppNavigator} />
       <Tab.Screen name="Menu" component={MenuScreen} />
+      <Tab.Screen name="Orders" component={OrderHistory} />
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );

@@ -13,20 +13,21 @@ import { BORDER_RADIUS, FONT_SIZE } from '../../utils/spacing';
 import InfoBadge from '../InfoBadge';
 import { useNavigation } from '@react-navigation/native';
 
-export default function OperationHealthComponent() {
+export default function OperationHealthComponent({ summary }) {
   const navigation = useNavigation();
+  const totalCancelled = Number(summary?.cancelled || 0);
   const topCards = [
     {
       id: 1,
       title: 'Offline outlets',
-      value: 4,
+      value: 0,
       icon: require('../../assets/images/overview/offline.png'),
       navigate: 'OutletsScreen',
     },
     {
       id: 2,
       title: 'Cancelled orders',
-      value: 7,
+      value: totalCancelled,
       icon: require('../../assets/images/overview/cancel.png'),
       navigate: 'OrderHistory',
     },
@@ -77,7 +78,8 @@ export default function OperationHealthComponent() {
         <View style={[styles.healthCard, { marginRight: 15 }]}>
           <Text style={styles.healthTitle}>Preparation time</Text>
           <Text style={styles.healthValue}>
-            24 <Text style={styles.unit}>min</Text>
+            {Number(summary?.avg_prep_time || 0)}{' '}
+            <Text style={styles.unit}>min</Text>
           </Text>
           <View style={styles.healthRow}>
             <InfoBadge text="1.24% ↑" />
@@ -86,9 +88,10 @@ export default function OperationHealthComponent() {
         </View>
 
         <View style={styles.healthCard}>
-          <Text style={styles.healthTitle}>Cancelations</Text>
+          <Text style={styles.healthTitle}>Cancellation rate</Text>
           <Text style={styles.healthValue}>
-            05 <Text style={styles.unit}>cancel</Text>
+            {Number(summary?.cancel_rate || 0).toFixed(2)}{' '}
+            <Text style={styles.unit}>%</Text>
           </Text>
           <View style={styles.healthRow}>
             <InfoBadge text="1.24% ↑" />
