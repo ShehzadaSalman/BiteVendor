@@ -22,4 +22,11 @@ export const COLORS = {
   lightPink: '#FFF9F9',
   black: '#000000',
   red: '#E53935',
+  // Status colors for badges/pills
+  success: '#16A34A', // completed/delivered
+  warning: '#F59E0B', // pending/placed
+  info: '#0284C7', // in progress/preparing
+  purple: '#7C3AED', // pickup/ready
+  cyan: '#0EA5E9', // on the way/dispatched
+  darkGray: '#6B7280', // default/unknown
 };

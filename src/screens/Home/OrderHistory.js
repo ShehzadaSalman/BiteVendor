@@ -137,18 +137,36 @@ export default function OrderHistory() {
   );
 }
 
+const normalizeStatus = raw =>
+  String(raw || '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ');
+
 const getStatusStyle = status => {
-  switch (status) {
+  const s = normalizeStatus(status);
+  switch (s) {
+    case 'PENDING':
+    case 'PLACED':
+      return { backgroundColor: COLORS.warning };
     case 'IN PROGRESS':
-      return { backgroundColor: COLORS.primary };
-    case 'CANCELLED':
-      return { backgroundColor: COLORS.red };
+    case 'PREPARING':
+      return { backgroundColor: COLORS.info };
     case 'PICK-UP':
-      return { backgroundColor: COLORS.primary };
+    case 'PICKUP':
+    case 'READY FOR PICKUP':
+      return { backgroundColor: COLORS.purple };
+    case 'DISPATCHED':
+    case 'ON THE WAY':
+      return { backgroundColor: COLORS.cyan };
     case 'COMPLETED':
-      return { backgroundColor: COLORS.primary };
+    case 'DELIVERED':
+      return { backgroundColor: COLORS.success };
+    case 'CANCELLED':
+    case 'CANCELED':
+      return { backgroundColor: COLORS.red };
     default:
-      return { backgroundColor: COLORS.gray };
+      return { backgroundColor: COLORS.darkGray };
   }
 };
 

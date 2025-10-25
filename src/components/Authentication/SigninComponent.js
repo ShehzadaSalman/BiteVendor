@@ -54,7 +54,7 @@ export default function SigninComponent() {
     try {
       setLoading(true);
       const response = await axios.post(
-        'https://development.bite.com.pk/api/vendor/auth/login',
+        'https://development.bite.com.pk/api/vendor/login',
         { email, password },
         { timeout: 15000 },
       );

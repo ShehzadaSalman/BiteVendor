@@ -33,7 +33,7 @@ export const VendorProvider = ({ children }) => {
       setLoading(true);
       setError('');
       const res = await axios.get(
-        'https://development.bite.com.pk/api/vendor/auth/me',
+        'https://development.bite.com.pk/api/vendor/me',
         {
           headers: { Authorization: `Bearer ${token}` },
           timeout: 15000,
@@ -56,7 +56,7 @@ export const VendorProvider = ({ children }) => {
     try {
       if (token) {
         await axios.post(
-          'https://development.bite.com.pk/api/vendor/auth/logout',
+          'https://development.bite.com.pk/api/vendor/logout',
           {},
           { headers: { Authorization: `Bearer ${token}` }, timeout: 15000 },
         );
