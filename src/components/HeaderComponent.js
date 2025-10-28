@@ -10,6 +10,7 @@ export default function HeaderComponent({
   bottomBorder = false,
   leftIcon = 'cross', // 'cross' | 'chevron'
   onLeftPress = null,
+  leftStyle = null,
   rightIcon, // require(...) | null
   onRightPress = null,
   isCircle = false, // ✅ toggle circle icons
@@ -33,7 +34,7 @@ export default function HeaderComponent({
     <View style={[styles.container, bottomBorder && styles.bottomBorder]}>
       {/* Left Icon */}
       <TouchableOpacity
-        style={[styles.leftIcon, isCircle && styles.circle]}
+        style={[styles.leftIcon, isCircle && styles.circle, leftStyle]}
         onPress={leftPress}
       >
         <Image source={getLeftIconSource()} />

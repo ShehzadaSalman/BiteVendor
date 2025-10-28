@@ -5,6 +5,9 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+# Firebase configuration
+$RNFirebaseAsStaticFramework = true
+
 platform :ios, min_ios_version_supported
 use_modular_headers!
 
@@ -23,8 +26,6 @@ target 'BiteVendor' do
     :path => config[:reactNativePath],
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
-  # Firebase has been removed
 
   post_install do |installer|
     react_native_post_install(

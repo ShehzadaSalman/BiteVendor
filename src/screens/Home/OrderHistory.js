@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
 import { COLORS, FONTS } from '../../constants';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -20,6 +21,7 @@ const FILTERS = ['Today', 'Yesterday', 'Last 7 days', '30 days'];
 const initialPageState = { page: 1, totalPages: 1 };
 
 export default function OrderHistory() {
+  const navigation = useNavigation();
   const [selectedFilter, setSelectedFilter] = useState('Today');
   const [orders, setOrders] = useState([]);
   const [pageInfo, setPageInfo] = useState(initialPageState);
@@ -50,7 +52,11 @@ export default function OrderHistory() {
   }, [loadPage]);
 
   const renderOrder = ({ item }) => (
-    <View style={styles.orderCard}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => navigation.navigate('OrderDetail', { id: item.id })}
+      style={styles.orderCard}
+    >
       <View style={styles.statusRow}>
         <View style={[styles.badge, getStatusStyle(item.status)]}>
           <Text style={styles.badgeText}>
@@ -67,7 +73,7 @@ export default function OrderHistory() {
         </View>
         <Text style={styles.price}>Rs. {Number(item.total_amount || 0)}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (

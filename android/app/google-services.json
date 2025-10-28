@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "321964978707",
+    "project_id": "aivoxagency-2b9d1",
+    "storage_bucket": "aivoxagency-2b9d1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321964978707:android:acfdc45d078dbd498d85e6",
+        "android_client_info": {
+          "package_name": "com.bitevendor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBT-7wm70BGeFjTpVFhOMlvV0xmMZsam4Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

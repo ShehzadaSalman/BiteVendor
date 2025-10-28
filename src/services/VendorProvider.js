@@ -28,24 +28,52 @@ export const VendorProvider = ({ children }) => {
   const [error, setError] = useState('');
 
   const fetchProfile = async () => {
-    if (!token) return;
+    if (!token) {
+      console.log('⚠️ VendorProvider: No token available');
+      return;
+    }
     try {
+      console.log('🔄 VendorProvider: Fetching vendor profile...');
       setLoading(true);
       setError('');
       const res = await axios.get(
-        'https://development.bite.com.pk/api/vendor/me',
+        'https://development.bite.com.pk/api/vendor/profile',
         {
           headers: { Authorization: `Bearer ${token}` },
           timeout: 15000,
         },
       );
       const data = res?.data;
-      if (data?.status && data?.vendor) {
-        setVendor(data.vendor);
+      console.log(
+        '📦 VendorProvider: Full API response:',
+        JSON.stringify(data, null, 2),
+      );
+
+      if (data?.success && data?.data) {
+        console.log('✅ VendorProvider: Vendor profile loaded', {
+          vendorId: data.data.id,
+          vendorName: data.data.name || data.data.restaurant_name,
+          fullVendorObject: data.data,
+        });
+        setVendor(data.data);
+      } else if (data?.data) {
+        // Handle case where success might be missing but data exists
+        console.log(
+          '⚠️ VendorProvider: Vendor data exists but success flag missing',
+        );
+        console.log('Vendor object:', data.data);
+        setVendor(data.data);
       } else {
+        console.log('❌ VendorProvider: Invalid response format');
+        console.log('Response structure:', {
+          hasSuccess: !!data?.success,
+          hasData: !!data?.data,
+          dataKeys: Object.keys(data || {}),
+        });
         setError('Failed to load profile');
       }
     } catch (e) {
+      console.error('❌ VendorProvider: Failed to load profile', e.message);
       setError('Failed to load profile');
     } finally {
       setLoading(false);
@@ -72,10 +100,12 @@ export const VendorProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
+      console.log('🔑 VendorProvider: Token available, fetching profile...');
       // ensure axios default header also set
       axios.defaults.headers.common.Authorization = `Bearer ${token}`;
       fetchProfile();
     } else {
+      console.log('⚠️ VendorProvider: No token, clearing vendor data');
       setVendor(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

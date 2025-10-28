@@ -74,3 +74,19 @@ export async function fetchOrders(page = 1) {
     throw new Error(message);
   }
 }
+
+// Fetch a single order details by id
+export async function fetchOrderDetail(orderId) {
+  try {
+    if (!orderId) throw new Error('Order id is required');
+    const response = await axios.get(`${BASE_URL}/orders/${orderId}`, {
+      timeout: 15000,
+      headers: { Accept: 'application/json' },
+    });
+    // API returns an object; return as-is
+    return response?.data;
+  } catch (error) {
+    const message = error?.response?.data?.message || 'Failed to fetch order';
+    throw new Error(message);
+  }
+}
