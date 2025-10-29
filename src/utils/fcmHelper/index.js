@@ -1,6 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
-import { Platform } from 'react-native';
+import { Platform, PermissionsAndroid } from 'react-native';
 import { navigationRef } from '../../navigation/navigationRef';
 
 /**
@@ -9,8 +9,46 @@ import { navigationRef } from '../../navigation/navigationRef';
 export const requestUserPermission = async () => {
   try {
     console.log('📱 Requesting notification permission...');
+    console.log('📱 Platform:', Platform.OS);
+    console.log('📱 Platform Version:', Platform.Version);
+
+    // For Android 13+ (API 33+), we need to request POST_NOTIFICATIONS permission
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      console.log('📱 Android 13+ detected, requesting POST_NOTIFICATIONS...');
+
+      try {
+        // Use React Native's built-in PermissionsAndroid
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          {
+            title: 'Notification Permission',
+            message:
+              'BiteVendor needs to send you notifications for new orders and updates.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Deny',
+            buttonPositive: 'Allow',
+          },
+        );
+
+        console.log('📱 Permission request result:', granted);
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('✅ POST_NOTIFICATIONS granted');
+          return true;
+        } else {
+          console.log('❌ POST_NOTIFICATIONS denied:', granted);
+          return false;
+        }
+      } catch (permError) {
+        console.error('❌ Error requesting POST_NOTIFICATIONS:', permError);
+        // Fallback to Firebase messaging permission
+        console.log('⚠️ Falling back to Firebase messaging permission...');
+      }
+    }
+
+    // For iOS and Android < 13, use Firebase messaging permission
     const authStatus = await messaging().requestPermission();
-    console.log('📱 Permission status:', authStatus);
+    console.log('📱 Firebase permission status:', authStatus);
 
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -25,6 +63,7 @@ export const requestUserPermission = async () => {
     }
   } catch (error) {
     console.error('❌ Error requesting notification permission:', error);
+    console.error('❌ Error details:', error.message);
     return false;
   }
 };
@@ -345,4 +384,60 @@ export const setupBackgroundMessageHandler = () => {
     // Background messages are handled by FCM automatically
     // You can add custom logic here if needed
   });
+};
+
+/**
+ * Test notification (for debugging)
+ * Call this to test if notifications are working
+ */
+export const sendTestNotification = async () => {
+  try {
+    console.log('🧪 Sending test notification...');
+    await displayNotification(
+      'Test Notification 🔔',
+      'If you see this, notifications are working!',
+      { type: 'new_order', test: true },
+    );
+    console.log('✅ Test notification sent');
+    return true;
+  } catch (error) {
+    console.error('❌ Test notification failed:', error);
+    return false;
+  }
+};
+
+/**
+ * Check notification permission status
+ */
+export const checkNotificationPermission = async () => {
+  try {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      // For Android 13+, check POST_NOTIFICATIONS permission
+      const result = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+      console.log('📱 Android 13+ permission status:', result);
+      return result;
+    } else if (Platform.OS === 'android') {
+      // For Android < 13, notifications are allowed by default
+      console.log('📱 Android < 13: Notifications allowed by default');
+      return true;
+    } else {
+      // For iOS, check Firebase messaging permission
+      const authStatus = await messaging().hasPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      console.log(
+        '📱 Firebase permission status:',
+        authStatus,
+        '- Enabled:',
+        enabled,
+      );
+      return enabled;
+    }
+  } catch (error) {
+    console.error('❌ Error checking permission:', error);
+    return false;
+  }
 };

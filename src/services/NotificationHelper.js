@@ -4,7 +4,13 @@
  * All notification logic now handled by fcmHelper
  */
 
-import { displayNotification } from '../utils/fcmHelper';
+import {
+  displayNotification,
+  initializeFCM,
+  sendTestNotification,
+  checkNotificationPermission,
+  requestUserPermission,
+} from '../utils/fcmHelper';
 
 /**
  * @deprecated Use initializeFCM from fcmHelper instead
@@ -43,3 +49,11 @@ export async function showNewOrderNotification({
     console.error('Error showing new order notification:', e);
   }
 }
+
+// Re-export useful functions
+export {
+  initializeFCM,
+  sendTestNotification,
+  checkNotificationPermission,
+  requestUserPermission,
+};
