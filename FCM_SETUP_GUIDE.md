@@ -61,7 +61,7 @@ cd ios && pod install && cd ..
 2. **Create/Select Project**: "Bite Vendor" or create new
 3. **Add Android App**:
 
-   - Package name: `com.bitevendor`
+   - Package name: `com.bite.vendor`
    - Download `google-services.json`
    - Place it at: `android/app/google-services.json`
 

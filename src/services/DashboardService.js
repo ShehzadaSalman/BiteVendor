@@ -8,7 +8,25 @@ export async function fetchDashboard(range = 'all') {
       params: { range },
       timeout: 15000,
     });
-    return response?.data;
+    const api = response?.data || {};
+    const rawData = api?.data || {};
+
+    // Normalize and map branches into summary for convenient consumption
+    const normalized = {
+      status: api?.status ?? false,
+      range: api?.range ?? range,
+      data: {
+        summary: {
+          ...(rawData?.summary || {}),
+          branches: rawData?.branches || { total: 0 },
+        },
+        chart: Array.isArray(rawData?.chart) ? rawData.chart : [],
+        branches: rawData?.branches || { total: 0 },
+        last_updated: rawData?.last_updated || null,
+      },
+    };
+
+    return normalized;
   } catch (error) {
     // Normalize error
     const message =
@@ -19,9 +37,10 @@ export async function fetchDashboard(range = 'all') {
 
 export async function fetchMenu() {
   try {
-    const response = await axios.get(`${BASE_URL}/menu`, {
-      timeout: 15000,
-    });
+    const response = await axios.get(
+      `https://development.bite.com.pk/api/vendor/menu`,
+    );
+    console.log('Menu response', response);
     // New API returns: { status, message, data: [ { id, name, menu_items: [...] }, ... ] }
     // Normalize to return just the array for consumers
     return Array.isArray(response?.data?.data) ? response.data.data : [];
@@ -90,3 +109,29 @@ export async function fetchOrderDetail(orderId) {
     throw new Error(message);
   }
 }
+
+async function postOrderAction(orderId, action) {
+  if (!orderId) throw new Error('Order id is required');
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/orders/${orderId}/${action}`,
+      {},
+      {
+        timeout: 15000,
+        headers: { Accept: 'application/json' },
+      },
+    );
+    return response?.data;
+  } catch (error) {
+    const message =
+      error?.response?.data?.message ||
+      `Failed to ${
+        action === 'ready' ? 'mark order ready' : `${action} order`
+      }`;
+    throw new Error(message);
+  }
+}
+
+export const acceptOrder = orderId => postOrderAction(orderId, 'accept');
+export const rejectOrder = orderId => postOrderAction(orderId, 'reject');
+export const markOrderReady = orderId => postOrderAction(orderId, 'ready');

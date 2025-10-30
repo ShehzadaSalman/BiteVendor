@@ -4,7 +4,7 @@ import { COLORS, FONTS } from '../../constants';
 import { BORDER_RADIUS, FONT_SIZE, rh, rw } from '../../utils/spacing';
 import { FilterChartContext } from '../../services/FilterChartProvider';
 
-const FILTERS = ['Today', 'Yesterday', '7 days', '30 days', 'All'];
+const FILTERS = ['Today', '7 days', '30 days', 'All'];
 
 export default function HorizontalFilters() {
   const { selected, setSelected } = useContext(FilterChartContext);

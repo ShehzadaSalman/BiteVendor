@@ -19,6 +19,7 @@ import { useVendor } from './src/services/VendorProvider';
 import {
   initializeFCM,
   setupTokenRefreshListener,
+  processPendingNotificationNavigation,
 } from './src/utils/fcmHelper';
 
 // Setup background message handler (must be outside component)
@@ -180,7 +181,10 @@ function App() {
           <FilterChartProvider>
             <VendorProvider>
               <MenuProvider>
-                <NavigationContainer ref={navigationRef}>
+                <NavigationContainer
+                  ref={navigationRef}
+                  onReady={processPendingNotificationNavigation}
+                >
                   <RootNavigation />
                 </NavigationContainer>
               </MenuProvider>

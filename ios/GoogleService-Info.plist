@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyBRwAAyds4GmCsAvejLaUv5Q6WuhsudTd0</string>
+	<string>AIzaSyBqv7qyFHOzy0Y4FvSOT_8nop48nRrBuWk</string>
 	<key>GCM_SENDER_ID</key>
-	<string>321964978707</string>
+	<string>599560400739</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.bitevendor</string>
 	<key>PROJECT_ID</key>
-	<string>aivoxagency-2b9d1</string>
+	<string>bite-14fd2</string>
 	<key>STORAGE_BUCKET</key>
-	<string>aivoxagency-2b9d1.firebasestorage.app</string>
+	<string>bite-14fd2.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:321964978707:ios:38d57b6a5f4477598d85e6</string>
+	<string>1:599560400739:ios:90ebe4da11656154ea6d56</string>
 </dict>
 </plist>

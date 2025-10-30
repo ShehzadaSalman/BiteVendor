@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "321964978707",
-    "project_id": "aivoxagency-2b9d1",
-    "storage_bucket": "aivoxagency-2b9d1.firebasestorage.app"
+    "project_number": "599560400739",
+    "project_id": "bite-14fd2",
+    "storage_bucket": "bite-14fd2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:321964978707:android:acfdc45d078dbd498d85e6",
+        "mobilesdk_app_id": "1:599560400739:android:d3ccfe570c368560ea6d56",
         "android_client_info": {
           "package_name": "com.bitevendor"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBT-7wm70BGeFjTpVFhOMlvV0xmMZsam4Y"
+          "current_key": "AIzaSyCbgfyEd7HpgIzf7CK7JaSTaMX-lsojPbY"
         }
       ],
       "services": {

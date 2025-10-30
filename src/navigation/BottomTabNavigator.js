@@ -142,7 +142,19 @@ export default function BottomTabNavigator() {
     >
       <Tab.Screen name="Home" component={AppNavigator} />
       <Tab.Screen name="Menu" component={MenuScreen} />
-      <Tab.Screen name="Orders" component={OrdersNavigator} />
+      <Tab.Screen
+        name="Orders"
+        component={OrdersNavigator}
+        listeners={({ navigation, route }) => ({
+          tabPress: () => {
+            const state = route?.state;
+            const currentRoute = state?.routes?.[state.index ?? 0];
+            if (currentRoute?.name !== 'OrderHistory') {
+              navigation.navigate('Orders', { screen: 'OrderHistory' });
+            }
+          },
+        })}
+      />
       <Tab.Screen name="Profile" component={ProfileNavigator} />
     </Tab.Navigator>
   );

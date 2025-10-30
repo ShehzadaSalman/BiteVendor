@@ -19,36 +19,63 @@ import { toggleMenuItemAvailability } from '../../services/DashboardService';
 
 // removed mocked categories; data now comes from API via useMenu
 
-export default function MenuScreen() {
-  const { menu, loading, refresh } = useMenu();
-  const [availabilityById, setAvailabilityById] = useState({});
+const ASSET_BASE_URL = 'https://development.bite.com.pk/';
+const REMOTE_PLACEHOLDER = 'https://placehold.co/50x50.png';
+const toImageUrl = path => {
+  if (!path || typeof path !== 'string') return null;
+  const trimmed = path.trim();
+  if (!trimmed) return null;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed; // already absolute
+  return ASSET_BASE_URL + trimmed.replace(/^\//, '');
+};
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Image source={item.img} style={styles.image} />
-      <View style={styles.textBox}>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.price}>Rs. {item.price}</Text>
-      </View>
-      <CustomToggle
-        isActive={!!availabilityById[item.id]}
-        onToggle={async () => {
-          // Optimistic UI update
-          setAvailabilityById(prev => ({ ...prev, [item.id]: !prev[item.id] }));
-          try {
-            await toggleMenuItemAvailability(item.id);
-            await refresh();
-          } catch (e) {
-            // Revert on failure
+export default function MenuScreen() {
+  const { menu, loading } = useMenu();
+  const [availabilityById, setAvailabilityById] = useState({});
+  const [imageFailedById, setImageFailedById] = useState({});
+
+  const renderItem = ({ item }) => {
+    const url = toImageUrl(item?.app_image);
+    const imageSource =
+      imageFailedById[item.id] || !url
+        ? { uri: REMOTE_PLACEHOLDER }
+        : { uri: url };
+    return (
+      <View style={styles.itemContainer}>
+        <Image
+          source={imageSource}
+          style={styles.image}
+          onError={() =>
+            setImageFailedById(prev => ({ ...prev, [item.id]: true }))
+          }
+        />
+        <View style={styles.textBox}>
+          <Text style={styles.itemName}>{item.name}</Text>
+          <Text style={styles.price}>Rs. {item.price}</Text>
+        </View>
+        <CustomToggle
+          isActive={!!availabilityById[item.id]}
+          onToggle={async () => {
+            // Optimistic UI update
             setAvailabilityById(prev => ({
               ...prev,
               [item.id]: !prev[item.id],
             }));
-          }
-        }}
-      />
-    </View>
-  );
+            try {
+              await toggleMenuItemAvailability(item.id);
+              // await refresh();
+            } catch (e) {
+              // Revert on failure
+              setAvailabilityById(prev => ({
+                ...prev,
+                [item.id]: !prev[item.id],
+              }));
+            }
+          }}
+        />
+      </View>
+    );
+  };
 
   const categories = useMemo(() => {
     // Transform API shape to screen's expected flat list per category
@@ -60,7 +87,10 @@ export default function MenuScreen() {
         id: String(item?.id ?? ''),
         name: item?.name ?? '',
         price: Number(item?.price ?? 0),
-        img: require('../../assets/images/Menu/item.png'),
+        img:
+          toImageUrl(item?.app_image) ||
+          require('../../assets/images/Menu/item.png'),
+        app_image: item?.app_image ?? null,
         is_available: item?.is_available === 1,
       })),
     }));
@@ -103,8 +133,8 @@ export default function MenuScreen() {
           renderItem={({ item }) => (
             <View>
               <Text style={styles.header}>{item.title}</Text>
-              {item.data.map(menu => (
-                <View key={menu.id}>{renderItem({ item: menu })}</View>
+              {item.data.map(menuItem => (
+                <View key={menuItem.id}>{renderItem({ item: menuItem })}</View>
               ))}
             </View>
           )}

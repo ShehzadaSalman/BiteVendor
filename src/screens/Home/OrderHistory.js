@@ -15,14 +15,14 @@ import CustomTitle from '../../components/CustomTitle';
 import { FONT_SIZE } from '../../utils/spacing';
 import { fetchOrders } from '../../services/DashboardService';
 
-const FILTERS = ['Today', 'Yesterday', 'Last 7 days', '30 days'];
+// const FILTERS = ['Today', 'Yesterday', 'Last 7 days', '30 days'];
 
 // API-driven orders state
 const initialPageState = { page: 1, totalPages: 1 };
 
 export default function OrderHistory() {
   const navigation = useNavigation();
-  const [selectedFilter, setSelectedFilter] = useState('Today');
+  // const [selectedFilter, setSelectedFilter] = useState('Today');
   const [orders, setOrders] = useState([]);
   const [pageInfo, setPageInfo] = useState(initialPageState);
   const [loading, setLoading] = useState(false);
@@ -89,6 +89,7 @@ export default function OrderHistory() {
       <CustomTitle variant="title">Order History</CustomTitle>
 
       {/* Filters */}
+      {/**
       <View style={styles.filterRow}>
         {FILTERS.map(filter => (
           <TouchableOpacity
@@ -110,8 +111,9 @@ export default function OrderHistory() {
           </TouchableOpacity>
         ))}
       </View>
+      **/}
 
-      <Text style={styles.sectionTitle}>Recent</Text>
+      {/* <Text style={styles.sectionTitle}>Recent</Text> */}
 
       {loading ? (
         <Text>Loading...</Text>

@@ -19,8 +19,8 @@ export default function OperationHealthComponent({ summary }) {
   const topCards = [
     {
       id: 1,
-      title: 'Offline outlets',
-      value: 0,
+      title: 'Branches',
+      value: summary?.branches?.total || 0,
       icon: require('../../assets/images/overview/offline.png'),
       navigate: 'OutletsScreen',
     },
@@ -31,13 +31,13 @@ export default function OperationHealthComponent({ summary }) {
       icon: require('../../assets/images/overview/cancel.png'),
       navigate: 'OrderHistory',
     },
-    {
-      id: 3,
-      title: 'Delayed orders',
-      value: 4,
-      icon: require('../../assets/images/overview/delay.png'),
-      navigate: 'OrderHistory',
-    },
+    // {
+    //   id: 3,
+    //   title: 'Delayed orders',
+    //   value: 4,
+    //   icon: require('../../assets/images/overview/delay.png'),
+    //   navigate: 'OrderHistory',
+    // },
     {
       id: 4,
       title: '1- star ratings',

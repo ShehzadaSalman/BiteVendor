@@ -26,24 +26,24 @@ export default function UserProfileScreen() {
             navigation: 'Profile',
             arrow: true,
           },
-          {
-            label: 'Help center',
-            icon: require('../../assets/images/user/helpCenter.png'),
-            navigation: 'HelpCenter',
-            arrow: true,
-          },
+          // {
+          //   label: 'Help center',
+          //   icon: require('../../assets/images/user/helpCenter.png'),
+          //   navigation: 'HelpCenter',
+          //   arrow: true,
+          // },
           {
             label: 'Terms and policies',
             icon: require('../../assets/images/user/TermsPolicies.png'),
             navigation: 'TermPolicy',
             arrow: true,
           },
-          {
-            label: 'Add promotions',
-            icon: require('../../assets/images/user/Coupon.png'),
-            navigation: 'Promotions',
-            arrow: true,
-          },
+          // {
+          //   label: 'Add promotions',
+          //   icon: require('../../assets/images/user/Coupon.png'),
+          //   navigation: 'Promotions',
+          //   arrow: true,
+          // },
         ].map((item, i) => (
           <TouchableOpacity
             key={i}

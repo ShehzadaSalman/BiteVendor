@@ -3,6 +3,97 @@ import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { Platform, PermissionsAndroid } from 'react-native';
 import { navigationRef } from '../../navigation/navigationRef';
 
+let pendingNotificationData = null;
+
+const sanitizeValue = value => {
+  if (value === undefined || value === null) return undefined;
+  const stringified = String(value).trim();
+  if (!stringified || stringified.toLowerCase() === 'null') return undefined;
+  if (stringified.toLowerCase() === 'undefined') return undefined;
+  return stringified;
+};
+
+const normalizeNotificationData = raw => {
+  if (!raw) return null;
+
+  const normalized = { ...raw };
+
+  const orderIdCandidate =
+    sanitizeValue(raw.order_id) ??
+    sanitizeValue(raw.orderId) ??
+    sanitizeValue(raw.orderID) ??
+    sanitizeValue(raw?.order?.id) ??
+    sanitizeValue(raw?.order?.order_id);
+
+  if (orderIdCandidate) {
+    normalized.order_id = orderIdCandidate;
+  }
+
+  const orderNumberCandidate =
+    sanitizeValue(raw.order_number) ??
+    sanitizeValue(raw.orderNumber) ??
+    sanitizeValue(raw?.order?.order_number);
+
+  if (orderNumberCandidate) {
+    normalized.order_number = orderNumberCandidate;
+  }
+
+  const typeCandidate =
+    sanitizeValue(raw.type) ??
+    sanitizeValue(raw.notification_type) ??
+    sanitizeValue(raw.action) ??
+    sanitizeValue(raw.event);
+
+  if (typeCandidate) {
+    normalized.type = typeCandidate;
+  }
+
+  return normalized;
+};
+
+const navigateToNotificationTarget = data => {
+  if (!data) return;
+
+  const type = String(data.type || '').toLowerCase();
+  const orderId = sanitizeValue(data.order_id);
+
+  console.log('📱 Navigating from notification:', type, orderId);
+
+  switch (type) {
+    case 'new_order':
+    case 'order_cancelled':
+    case 'order_canceled':
+    case 'rider_assigned':
+    case 'order_ready':
+    case 'order_ready_for_pickup':
+      if (orderId) {
+        navigationRef.navigate('Orders', {
+          screen: 'OrderDetail',
+          params: { id: orderId },
+        });
+      } else {
+        console.log('⚠️ Missing order_id in notification data:', data);
+      }
+      break;
+    case 'low_stock':
+      console.log('Navigate to inventory for item:', data?.item_id);
+      break;
+    case 'payment_received':
+      console.log('Navigate to payment history');
+      break;
+    default:
+      navigationRef.navigate('Home');
+  }
+};
+
+export const processPendingNotificationNavigation = () => {
+  if (pendingNotificationData && navigationRef.isReady()) {
+    const data = pendingNotificationData;
+    pendingNotificationData = null;
+    navigateToNotificationTarget(data);
+  }
+};
+
 /**
  * Request notification permissions (iOS & Android 13+)
  */
@@ -179,40 +270,22 @@ export const displayNotification = async (title, body, data = {}) => {
 /**
  * Handle notification navigation based on type
  */
-export const handleNotificationNavigation = data => {
-  if (!data || !navigationRef.isReady()) return;
+export const handleNotificationNavigation = rawData => {
+  const normalizedData = normalizeNotificationData(rawData);
 
-  const { type, order_id, item_id } = data;
+  if (!normalizedData) return;
 
-  console.log('📱 Navigating from notification:', type, order_id);
-
-  switch (type) {
-    case 'new_order':
-    case 'order_cancelled':
-    case 'rider_assigned':
-      // Navigate to order details
-      if (order_id) {
-        navigationRef.navigate('Orders', {
-          screen: 'OrderDetail',
-          params: { id: order_id },
-        });
-      }
-      break;
-
-    case 'low_stock':
-      // Navigate to menu/inventory if you have that screen
-      console.log('Navigate to inventory for item:', item_id);
-      break;
-
-    case 'payment_received':
-      // Navigate to payment history if you have that screen
-      console.log('Navigate to payment history');
-      break;
-
-    default:
-      // Default to home
-      navigationRef.navigate('Home');
+  if (!navigationRef.isReady()) {
+    pendingNotificationData = normalizedData;
+    console.log(
+      '⏳ Navigation not ready, stored pending notification:',
+      normalizedData,
+    );
+    return;
   }
+
+  pendingNotificationData = null;
+  navigateToNotificationTarget(normalizedData);
 };
 
 /**

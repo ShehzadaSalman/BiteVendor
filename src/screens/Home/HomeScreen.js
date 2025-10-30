@@ -27,8 +27,6 @@ const mapFilterToRange = filter => {
   switch (filter) {
     case 'Today':
       return 'today';
-    case 'Yesterday':
-      return 'yesterday';
     case '7 days':
       return '7days';
     case '30 days':
@@ -41,7 +39,7 @@ const mapFilterToRange = filter => {
 };
 
 export default function HomeScreen() {
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
   const { selected } = useContext(FilterChartContext);
   const { vendor, logout } = useVendor();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -169,6 +167,16 @@ export default function HomeScreen() {
             <View style={styles.menuOverlay} />
           </TouchableWithoutFeedback>
           <View style={[styles.dropdown, { top: 60, right: 16 }]}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setMenuOpen(false);
+                navigation.navigate('Profile', { screen: 'Profile' });
+              }}
+            >
+              <View>
+                <Text style={styles.dropdownItem}>View Profile</Text>
+              </View>
+            </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={() => {
                 setMenuOpen(false);
