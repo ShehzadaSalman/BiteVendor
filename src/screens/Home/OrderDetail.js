@@ -255,10 +255,10 @@ export default function OrderDetail() {
               </View>
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>
-                  Delivery Charges (GST 16 added)
+                  Delivery Charges (GST added)
                 </Text>
                 <Text style={styles.totalLabel}>
-                  Rs. {Number(order?.deliveryFee || 0)}
+                  Rs. {Number(order?.deliveryFee || 0)} ( +16)
                 </Text>
               </View>
               <View style={[styles.totalRow, styles.totalDivider]} />
