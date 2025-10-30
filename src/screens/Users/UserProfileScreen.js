@@ -26,6 +26,12 @@ export default function UserProfileScreen() {
             navigation: 'Profile',
             arrow: true,
           },
+          {
+            label: 'Branches',
+            icon: require('../../assets/images/user/black-house.png'),
+            navigation: 'OutletsScreen',
+            arrow: true,
+          },
           // {
           //   label: 'Help center',
           //   icon: require('../../assets/images/user/helpCenter.png'),

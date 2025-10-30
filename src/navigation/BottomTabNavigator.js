@@ -145,13 +145,11 @@ export default function BottomTabNavigator() {
       <Tab.Screen
         name="Orders"
         component={OrdersNavigator}
-        listeners={({ navigation, route }) => ({
-          tabPress: () => {
-            const state = route?.state;
-            const currentRoute = state?.routes?.[state.index ?? 0];
-            if (currentRoute?.name !== 'OrderHistory') {
-              navigation.navigate('Orders', { screen: 'OrderHistory' });
-            }
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            // Always take user to the Orders list when pressing the Orders tab
+            e?.preventDefault?.();
+            navigation.navigate('Orders', { screen: 'OrderHistory' });
           },
         })}
       />

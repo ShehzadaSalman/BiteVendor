@@ -150,6 +150,7 @@ export default function OrderDetail() {
     [order?.status],
   );
   const isPending = statusKey === 'pending';
+  const isConfirmed = statusKey === 'confirmed';
 
   // Auto-decline timer functionality removed per requirements
 
@@ -199,7 +200,11 @@ export default function OrderDetail() {
                 label="Customer Name"
                 value={order?.customerName || '-'}
               />
-              <DetailRow label="Address" value={order?.addressText || '-'} />
+              <DetailRow
+                label="Address"
+                value={order?.addressText || '-'}
+                valueStyle={styles.detailValueRight}
+              />
               <DetailRow
                 label="Payment Method"
                 value={order?.paymentMethod || '-'}
@@ -245,20 +250,22 @@ export default function OrderDetail() {
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>Subtotal</Text>
                 <Text style={styles.totalLabel}>
-                  Rs . {Number(order?.subtotal || 0)}
+                  Rs. {Number(order?.subtotal || 0)}
                 </Text>
               </View>
               <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>Delivery Charges</Text>
                 <Text style={styles.totalLabel}>
-                  Rs . {Number(order?.deliveryFee || 0)}
+                  Delivery Charges (GST 16 added)
+                </Text>
+                <Text style={styles.totalLabel}>
+                  Rs. {Number(order?.deliveryFee || 0)}
                 </Text>
               </View>
               <View style={[styles.totalRow, styles.totalDivider]} />
               <View style={styles.totalRow}>
                 <Text style={styles.totalTitle}>Total</Text>
                 <Text style={styles.totalTitle}>
-                  Rs . {Number(order?.totalAmount || 0)}
+                  Rs. {Number(order?.totalAmount || 0)}
                 </Text>
               </View>
             </View>
@@ -279,22 +286,17 @@ export default function OrderDetail() {
                     loading={actionLoading === 'accept'}
                     disabled={loading || isActionBusy}
                   />
-                  <ActionButton
-                    label="Ready for Delivery"
-                    variant="outline"
-                    onPress={handleMarkReady}
-                    loading={actionLoading === 'ready'}
-                    disabled={loading || isActionBusy}
-                  />
                 </View>
               </>
-            ) : (
+            ) : null}
+
+            {isConfirmed ? (
               <AppButton
                 title="Ready for Delivery"
                 onPress={handleMarkReady}
                 style={{ marginTop: SPACING.large }}
               />
-            )}
+            ) : null}
           </>
         )}
       </ScrollView>
@@ -302,11 +304,11 @@ export default function OrderDetail() {
   );
 }
 
-function DetailRow({ label, value }) {
+function DetailRow({ label, value, valueStyle }) {
   return (
     <View style={styles.detailRow}>
       <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue}>{value}</Text>
+      <Text style={[styles.detailValue, valueStyle]}>{value}</Text>
     </View>
   );
 }
@@ -367,6 +369,12 @@ function extractAddressText(order) {
     if (trimmed) return trimmed;
   }
 
+  // Support shipping_address as string
+  if (typeof order?.shipping_address === 'string') {
+    const trimmed = order.shipping_address.trim();
+    if (trimmed) return trimmed;
+  }
+
   const directString =
     (typeof order?.address?.full_address === 'string'
       ? order.address.full_address.trim()
@@ -379,12 +387,20 @@ function extractAddressText(order) {
       : '') ||
     (typeof order?.address?.address_line === 'string'
       ? order.address.address_line.trim()
+      : '') ||
+    (typeof order?.shipping_address?.address_line === 'string'
+      ? order.shipping_address.address_line.trim()
       : '');
 
   if (directString) return directString;
 
   const addressObject =
-    order?.address && typeof order.address === 'object' ? order.address : null;
+    (order?.address && typeof order.address === 'object'
+      ? order.address
+      : null) ||
+    (order?.shipping_address && typeof order.shipping_address === 'object'
+      ? order.shipping_address
+      : null);
 
   if (addressObject) {
     const parts = [
@@ -514,7 +530,7 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   card: {
-    borderTopWidth: 1,
+    borderTopWidth: 0,
     borderBottomWidth: 1,
     borderColor: COLORS.gray,
     paddingVertical: 12,
@@ -529,14 +545,19 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontFamily: FONTS.bold700,
     fontWeight: '700',
-    fontSize: FONT_SIZE.medium,
+    fontSize: FONT_SIZE.normal,
     color: COLORS.black,
   },
   detailValue: {
     fontFamily: FONTS.medium500,
     fontWeight: '500',
-    fontSize: FONT_SIZE.medium,
+    fontSize: FONT_SIZE.normal,
     color: COLORS.grayText1,
+  },
+  detailValueRight: {
+    textAlign: 'right',
+    paddingLeft: 12,
+    flex: 1,
   },
   itemBlock: {
     gap: 8,
@@ -550,13 +571,13 @@ const styles = StyleSheet.create({
   itemLabel: {
     fontFamily: FONTS.bold700,
     fontWeight: '700',
-    fontSize: FONT_SIZE.large,
+    fontSize: FONT_SIZE.normal,
     color: COLORS.black,
   },
   itemValue: {
     fontFamily: FONTS.medium500,
     fontWeight: '500',
-    fontSize: FONT_SIZE.large,
+    fontSize: FONT_SIZE.normal,
     color: COLORS.black,
   },
   totalsCard: {
@@ -572,7 +593,7 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontFamily: FONTS.medium500,
     fontWeight: '500',
-    fontSize: FONT_SIZE.large,
+    fontSize: FONT_SIZE.normal,
     color: COLORS.black,
   },
   totalTitle: {

@@ -15,6 +15,7 @@ const VendorContext = createContext({
   error: '',
   refresh: async () => {},
   logout: async () => {},
+  updateProfile: async () => {},
 });
 
 export const useVendor = () => useContext(VendorContext);
@@ -80,6 +81,41 @@ export const VendorProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async fields => {
+    if (!token) {
+      console.log('⚠️ VendorProvider: Cannot update profile without token');
+      throw new Error('Not authenticated');
+    }
+    try {
+      setLoading(true);
+      setError('');
+      // Only send defined fields
+      const payload = Object.fromEntries(
+        Object.entries(fields || {}).filter(([, v]) => v !== undefined),
+      );
+      const res = await axios.post(
+        'https://development.bite.com.pk/api/vendor/profile/update',
+        payload,
+        { headers: { Authorization: `Bearer ${token}` }, timeout: 15000 },
+      );
+      const data = res?.data;
+      // If API returns updated vendor object, use it; otherwise refresh
+      if (data?.data) {
+        setVendor(prev => ({ ...(prev || {}), ...(data.data || {}) }));
+      } else {
+        await fetchProfile();
+      }
+      return data;
+    } catch (e) {
+      const message =
+        e?.response?.data?.message || e?.message || 'Failed to update profile';
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
       if (token) {
@@ -112,7 +148,7 @@ export const VendorProvider = ({ children }) => {
   }, [token]);
 
   const value = useMemo(
-    () => ({ vendor, loading, error, refresh: fetchProfile, logout }),
+    () => ({ vendor, loading, error, refresh: fetchProfile, logout, updateProfile }),
     [vendor, loading, error],
   );
 

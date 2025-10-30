@@ -16,18 +16,38 @@ import AppButton from '../../components/AppButton';
 import { isIOS, SCREEN_WIDTH } from '../../utils/layout';
 import HeaderComponent from '../../components/HeaderComponent';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Alert } from 'react-native';
+import { useVendor } from '../../services/VendorProvider';
 
 export default function EditMobileScreen() {
   const navigation = useNavigation();
-  const [mobile, setMobile] = useState('');
+  const { vendor, updateProfile } = useVendor();
+  const [mobile, setMobile] = useState(vendor?.phone || vendor?.alternate_phone || '');
   const insets = useSafeAreaInsets();
+
+  const onSave = async () => {
+    const digits = String(mobile || '').replace(/\D+/g, '');
+    if (!digits) {
+      Alert.alert('Mobile required', 'Please enter your mobile number.');
+      return;
+    }
+    // Prepend +92 if user omitted country code
+    const formatted = digits.startsWith('92') ? `+${digits}` : `+92${digits}`;
+    try {
+      await updateProfile({ phone: formatted });
+      Alert.alert('Saved', 'Your mobile number has been updated.');
+      navigation.goBack();
+    } catch (e) {
+      Alert.alert('Update failed', e?.message || 'Please try again.');
+    }
+  };
   return (
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <HeaderComponent
         title="Mobile Number"
         leftIcon="chevron"
         rightIcon={require('../../assets/images/user/tick.png')}
-        onRightPress={() => console.log('Saved')}
+        onRightPress={onSave}
       />
 
       <KeyboardAvoidingView
@@ -55,7 +75,7 @@ export default function EditMobileScreen() {
         </ScrollView>
 
         <View style={styles.buttonWrapper}>
-          <AppButton title="Save" onPress={() => navigation.goBack()} />
+          <AppButton title="Save" onPress={onSave} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

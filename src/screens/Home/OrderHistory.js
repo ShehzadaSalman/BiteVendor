@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import { COLORS, FONTS } from '../../constants';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -47,9 +47,11 @@ export default function OrderHistory() {
     }
   }, []);
 
-  useEffect(() => {
-    loadPage(1);
-  }, [loadPage]);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPage(1);
+    }, [loadPage]),
+  );
 
   const renderOrder = ({ item }) => (
     <TouchableOpacity

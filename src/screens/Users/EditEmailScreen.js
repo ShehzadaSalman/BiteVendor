@@ -16,11 +16,29 @@ import AppButton from '../../components/AppButton';
 import { isIOS } from '../../utils/layout';
 import HeaderComponent from '../../components/HeaderComponent';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Alert } from 'react-native';
+import { useVendor } from '../../services/VendorProvider';
 
 export default function EditEmailScreen() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
+  const { vendor, updateProfile } = useVendor();
+  const [email, setEmail] = useState(vendor?.email || '');
   const insets = useSafeAreaInsets();
+
+  const onSave = async () => {
+    const trimmed = String(email || '').trim();
+    if (!trimmed) {
+      Alert.alert('Email required', 'Please enter your email.');
+      return;
+    }
+    try {
+      await updateProfile({ email: trimmed });
+      Alert.alert('Saved', 'Your email has been updated.');
+      navigation.goBack();
+    } catch (e) {
+      Alert.alert('Update failed', e?.message || 'Please try again.');
+    }
+  };
   return (
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <HeaderComponent
@@ -28,7 +46,7 @@ export default function EditEmailScreen() {
         leftIcon="chevron"
         bottomBorder={true}
         rightIcon={require('../../assets/images/user/tick.png')}
-        onRightPress={() => console.log('Saved')}
+        onRightPress={onSave}
       />
 
       <KeyboardAvoidingView
@@ -49,10 +67,7 @@ export default function EditEmailScreen() {
         </ScrollView>
 
         <View style={styles.buttonWrapper}>
-          <AppButton
-            title="Save"
-            onPress={() => navigation.navigate('VerifyEmail')}
-          />
+          <AppButton title="Save" onPress={onSave} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

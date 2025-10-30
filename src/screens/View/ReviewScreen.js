@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,26 +17,26 @@ import HeaderComponent from '../../components/HeaderComponent';
 import CustomTitle from '../../components/CustomTitle';
 import starIcon from '../../assets/images/Review/star.png';
 import emptyStarIcon from '../../assets/images/Review/emptyStar.png'; // optional, for empty stars
+import { fetchReviews } from '../../services/DashboardService';
 
 //import { COLORS, FONTS } from 'constants';
 //import { FONT_SIZE, rh } from 'utils/spacing';
 
-const reviews = [
-  {
-    id: '1',
-    rating: 4,
-    date: '8/15/2025',
-    time: '11:30 AM',
-    text: 'This pizza is an explosion of flavor in every bite! The tender chunks of smoky, perfectly spiced chicken tikka are layered generously over a bed of gooey mozzarella and creamy tikka sauce. The crust is soft on the inside with just the right crunch on the outside — like naan meets pizza.',
-  },
-  {
-    id: '2',
-    rating: 4,
-    date: '8/15/2025',
-    time: '11:30 AM',
-    text: 'This pizza is an explosion of flavor in every bite! The tender chunks of smoky, perfectly spiced chicken tikka are layered generously over a bed of gooey mozzarella and creamy tikka sauce. The crust is soft on the inside with just the right crunch on the outside — like naan meets pizza.',
-  },
-];
+const formatDate = iso => {
+  const d = iso ? new Date(iso) : null;
+  if (!d) return '-';
+  return d.toLocaleDateString(undefined, {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+};
+
+const formatTime = iso => {
+  const d = iso ? new Date(iso) : null;
+  if (!d) return '-';
+  return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+};
 
 const Stars = ({ rating = 0, maxStars = 5 }) => {
   return (
@@ -51,7 +53,89 @@ const Stars = ({ rating = 0, maxStars = 5 }) => {
 };
 
 const ReviewScreen = () => {
-  const filters = ['Custom', 'Last week', 'Last month'];
+  // const filters = ['Custom', 'Last week', 'Last month'];
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
+  const [reviews, setReviews] = useState([]);
+
+  const load = useCallback(async ({ isRefresh = false } = {}) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    try {
+      setError('');
+      const list = await fetchReviews();
+      setReviews(Array.isArray(list) ? list : []);
+    } catch (e) {
+      setError(e?.message || 'Failed to load reviews');
+    } finally {
+      if (isRefresh) setRefreshing(false);
+      else setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const averageRating = useMemo(() => {
+    if (!reviews.length) return 0;
+    const sum = reviews.reduce((acc, r) => acc + Number(r?.rating || 0), 0);
+    return Number(sum / reviews.length).toFixed(1);
+  }, [reviews]);
+
+  const starBuckets = useMemo(() => {
+    const buckets = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    reviews.forEach(r => {
+      const rate = Math.round(Number(r?.rating || 0));
+      if (rate >= 1 && rate <= 5) buckets[rate] += 1;
+    });
+    return buckets;
+  }, [reviews]);
+
+  const maxBucket = useMemo(() => {
+    return Math.max(1, ...Object.values(starBuckets));
+  }, [starBuckets]);
+
+  const renderBars = () => (
+    <>
+      {[5, 4, 3, 2, 1].map(stars => {
+        const count = starBuckets[stars] || 0;
+        const percentage = (count / maxBucket) * 100;
+        return (
+          <View key={stars} style={{ marginVertical: 4 }}>
+            <View style={styles.row}>
+              <Text style={styles.starLabel}>{stars}</Text>
+              <Image source={starIcon} style={styles.star} />
+              <View style={styles.progressBar}>
+                <View style={[styles.progressFill, { width: `${percentage}%` }]} />
+              </View>
+            </View>
+            <Text style={styles.count}>({count})</Text>
+          </View>
+        );
+      })}
+    </>
+  );
+
+  const renderItem = ({ item }) => {
+    const dateText = formatDate(item?.created_at);
+    const timeText = formatTime(item?.created_at);
+    const rating = Number(item?.rating || 0);
+    const text = item?.comment || '';
+    return (
+      <View style={styles.reviewCard}>
+        <View style={[styles.row, { justifyContent: 'space-between' }]}>
+          <Stars rating={rating} />
+          <Text style={styles.date}>
+            {dateText} {'\n'}
+            {timeText}
+          </Text>
+        </View>
+        <Text style={styles.reviewText}>{text}</Text>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -62,42 +146,26 @@ const ReviewScreen = () => {
         rightIcon={require('../../assets/images/Header/notification.png')}
       />
       <CustomTitle variant="title">Review</CustomTitle>
-      {/* Rating Summary */}
-      <Text style={styles.mainRating}>4.0</Text>
-      <Stars rating={5} />
-      <Text style={styles.reviewCount}>300 Reviews</Text>
-      {/* Progress Bars */}
+      {loading ? (
+        <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+          <ActivityIndicator color={COLORS.primary} />
+        </View>
+      ) : null}
 
-      {[
-        { stars: 5, count: 222 },
-        { stars: 4, count: 200 },
-        { stars: 3, count: 50 },
-        { stars: 2, count: 30 },
-        { stars: 1, count: 10 },
-      ].map(({ stars, count }) => {
-        const max = 222; // your highest count
-        const percentage = (count / max) * 100;
+      {!loading && (
+        <>
+          {/* Rating Summary */}
+          <Text style={styles.mainRating}>{averageRating}</Text>
+          <Stars rating={Math.round(Number(averageRating))} />
+          <Text style={styles.reviewCount}>{reviews.length} Reviews</Text>
 
-        return (
-          <View key={stars} style={{ marginVertical: 4 }}>
-            <View style={styles.row}>
-              <Text style={styles.starLabel}>{stars}</Text>
-              <Image source={starIcon} style={styles.star} />
-              <View style={styles.progressBar}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { width: `${percentage}%` }, // width instead of flex
-                  ]}
-                />
-              </View>
-            </View>
-            <Text style={styles.count}>({count})</Text>
-          </View>
-        );
-      })}
+          {/* Progress Bars */}
+          {renderBars()}
+        </>
+      )}
 
-      {/* Filter Chips */}
+      {/* Filter Chips - commented out */}
+      {/**
       <View style={styles.row}>
         <View style={styles.imageContainer}>
           <Image source={require('../../assets/images/Review/Review.png')} />
@@ -110,24 +178,38 @@ const ReviewScreen = () => {
           ))}
         </View>
       </View>
+      */}
       {/* Reviews List */}
-      <FlatList
-        data={reviews}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.reviewCard}>
-            <View style={[styles.row, { justifyContent: 'space-between' }]}>
-              <Stars rating={4} />
-              <Text style={styles.date}>
-                {item.date} {'\n'}
-                {item.time}
-              </Text>
+      {!loading && !error && (
+        <FlatList
+          data={reviews}
+          keyExtractor={(item, index) => String(item?.id ?? item?.order_id ?? index)}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => load({ isRefresh: true })}
+              tintColor={COLORS.primary}
+              colors={[COLORS.primary]}
+            />
+          }
+          ListEmptyComponent={
+            <View style={{ paddingVertical: 20 }}>
+              <Text style={styles.reviewCount}>No reviews yet</Text>
             </View>
-            <Text style={styles.reviewText}>{item.text}</Text>
-          </View>
-        )}
-        showsVerticalScrollIndicator={false}
-      />
+          }
+        />
+      )}
+
+      {!!error && !loading && (
+        <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+          <Text style={{ color: COLORS.red, marginBottom: 10 }}>{error}</Text>
+          <TouchableOpacity onPress={() => load()} style={styles.filterChip}>
+            <Text style={styles.filterText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

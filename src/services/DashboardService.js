@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { store } from '../redux/store';
 
 const BASE_URL = 'https://development.bite.com.pk/api/vendor';
 
@@ -67,14 +68,41 @@ export async function toggleMenuItemAvailability(menuItemId) {
   }
 }
 
+export async function fetchReviews() {
+  try {
+    const token = store.getState()?.auth?.user?.token;
+    const response = await axios.get(
+      `https://development.bite.com.pk/api/vendor/reviews`,
+      {
+        timeout: 15000,
+        headers: {
+          Accept: 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      },
+    );
+    const list = Array.isArray(response?.data?.data)
+      ? response.data.data
+      : [];
+    return list;
+  } catch (error) {
+    const message = error?.response?.data?.message || 'Failed to fetch reviews';
+    throw new Error(message);
+  }
+}
+
 export async function fetchOrders(page = 1) {
   try {
+    const token = store.getState()?.auth?.user?.token;
     const response = await axios.get(
       'https://development.bite.com.pk/api/vendor/orders',
       {
         params: { page },
         timeout: 15000,
-        headers: { Accept: 'application/json' },
+        headers: {
+          Accept: 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       },
     );
     const data = response?.data;
@@ -98,9 +126,13 @@ export async function fetchOrders(page = 1) {
 export async function fetchOrderDetail(orderId) {
   try {
     if (!orderId) throw new Error('Order id is required');
+    const token = store.getState()?.auth?.user?.token;
     const response = await axios.get(`${BASE_URL}/orders/${orderId}`, {
       timeout: 15000,
-      headers: { Accept: 'application/json' },
+      headers: {
+        Accept: 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
     });
     // API returns an object; return as-is
     return response?.data;
@@ -113,21 +145,27 @@ export async function fetchOrderDetail(orderId) {
 async function postOrderAction(orderId, action) {
   if (!orderId) throw new Error('Order id is required');
   try {
+    const token = store.getState()?.auth?.user?.token;
     const response = await axios.post(
       `${BASE_URL}/orders/${orderId}/${action}`,
       {},
       {
         timeout: 15000,
-        headers: { Accept: 'application/json' },
+        headers: {
+          Accept: 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       },
     );
     return response?.data;
   } catch (error) {
+    const serverMessage = error?.response?.data?.message;
     const message =
-      error?.response?.data?.message ||
-      `Failed to ${
-        action === 'ready' ? 'mark order ready' : `${action} order`
-      }`;
+      serverMessage && typeof serverMessage === 'string'
+        ? serverMessage
+        : `Failed to ${
+            action === 'ready' ? 'mark order ready' : `${action} order`
+          }`;
     throw new Error(message);
   }
 }

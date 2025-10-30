@@ -16,12 +16,33 @@ import AppButton from '../../components/AppButton';
 import { isIOS } from '../../utils/layout';
 import HeaderComponent from '../../components/HeaderComponent';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Alert } from 'react-native';
+import { useVendor } from '../../services/VendorProvider';
 
 export default function EditNameScreen() {
   const navigation = useNavigation();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const { vendor, updateProfile } = useVendor();
+  const initialName = vendor?.name || vendor?.restaurant_name || '';
+  const [firstName, setFirstName] = useState(initialName.split(' ')[0] || '');
+  const [lastName, setLastName] = useState(
+    initialName.split(' ').slice(1).join(' '),
+  );
   const insets = useSafeAreaInsets();
+
+  const onSave = async () => {
+    const name = `${firstName || ''} ${lastName || ''}`.trim();
+    if (!name) {
+      Alert.alert('Name required', 'Please enter your name.');
+      return;
+    }
+    try {
+      await updateProfile({ name });
+      Alert.alert('Saved', 'Your name has been updated.');
+      navigation.goBack();
+    } catch (e) {
+      Alert.alert('Update failed', e?.message || 'Please try again.');
+    }
+  };
   return (
     <SafeAreaView style={[styles.safeArea, { paddingTop: insets.top }]}>
       <HeaderComponent
@@ -29,7 +50,7 @@ export default function EditNameScreen() {
         bottomBorder={true}
         leftIcon="chevron"
         rightIcon={require('../../assets/images/user/tick.png')}
-        onRightPress={() => console.log('Saved')}
+        onRightPress={onSave}
       />
 
       <KeyboardAvoidingView
@@ -58,7 +79,7 @@ export default function EditNameScreen() {
         </ScrollView>
 
         <View style={styles.buttonWrapper}>
-          <AppButton title="Save" onPress={() => navigation.goBack()} />
+          <AppButton title="Save" onPress={onSave} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
